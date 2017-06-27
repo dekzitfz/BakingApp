@@ -8,6 +8,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
+import id.dekz.bakingapp.model.Recipe;
 
 /**
  * Created by DEKZ on 6/27/2017.
@@ -24,7 +25,9 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bind(){
-
+    public void bind(Recipe data){
+        img.setImageResource(R.drawable.nutella_pie_img);
+        name.setText(data.getName());
+        servings.setText(data.getResolvedServings());
     }
 }

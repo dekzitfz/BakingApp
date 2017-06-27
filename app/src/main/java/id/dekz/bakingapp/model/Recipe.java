@@ -90,4 +90,8 @@ public class Recipe {
                 ", steps=" + steps +
                 '}';
     }
+
+    public String getResolvedServings(){
+        return servings+" Serving(s)";
+    }
 }

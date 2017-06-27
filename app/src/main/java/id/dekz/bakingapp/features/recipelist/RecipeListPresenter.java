@@ -18,11 +18,10 @@ import retrofit2.Response;
 
 public class RecipeListPresenter implements BasePresenter<RecipeListView> {
 
-    RecipeListView view;
+    private RecipeListView view;
     private static final String TAG = RecipeListPresenter.class.getSimpleName();
 
     private Call<List<Recipe>> recipeCall;
-    private List<Recipe> data;
 
     @Override
     public void onAttach(RecipeListView BaseView) {
@@ -45,8 +44,8 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
             public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull Response<List<Recipe>> response) {
                 if(response.isSuccessful()){
                     if(response.body() != null){
-                        data = response.body();
-                        for(Recipe r : data){
+                        //noinspection ConstantConditions
+                        for(Recipe r : response.body()){
                             Log.i(TAG, r.getName());
                         }
                     }else{
