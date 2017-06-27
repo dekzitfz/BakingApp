@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recipe_list_img_height">175dp</dimen>
+    <dimen name="recipe_list_title">16sp</dimen>
+    <dimen name="recipe_list_servings">12sp</dimen>
+</resources>

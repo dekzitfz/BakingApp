@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="5dp"
+    app:cardUseCompatPadding="true"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:scaleType="centerCrop"
+            tools:src="@drawable/nutella_pie_img"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/recipe_list_img_height" />
+
+        <RelativeLayout
+            android:background="@color/colorPrimaryLight"
+            android:padding="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="@color/primary_text"
+                android:id="@+id/tv_recipe_name"
+                android:textSize="@dimen/recipe_list_title"
+                tools:text="Nutella Pie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textColor="@color/secondary_text"
+                android:layout_below="@id/tv_recipe_name"
+                android:textSize="@dimen/recipe_list_servings"
+                tools:text="12 Servings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
