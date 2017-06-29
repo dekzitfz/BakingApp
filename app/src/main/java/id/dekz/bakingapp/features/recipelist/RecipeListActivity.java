@@ -2,16 +2,23 @@ package id.dekz.bakingapp.features.recipelist;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
+import id.dekz.bakingapp.adapter.RecipeAdapter;
 import id.dekz.bakingapp.model.Recipe;
 
 public class RecipeListActivity extends AppCompatActivity implements RecipeListView {
 
     private RecipeListPresenter presenter;
+    private RecipeAdapter adapter;
+
+    @BindView(R.id.rv_recipe)RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +26,14 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
         setContentView(R.layout.activity_recipe_list);
         ButterKnife.bind(this);
 
+        setupRecyclerView();
         onAttachView();
+    }
+
+    private void setupRecyclerView(){
+        adapter = new RecipeAdapter();
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(adapter);
     }
 
     @Override
@@ -36,7 +50,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
 
     @Override
     public void onDataReceived(List<Recipe> data) {
-
+        adapter.replaceAll(data);
     }
 
     @Override

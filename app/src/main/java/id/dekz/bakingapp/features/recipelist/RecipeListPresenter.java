@@ -45,9 +45,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                 if(response.isSuccessful()){
                     if(response.body() != null){
                         //noinspection ConstantConditions
-                        for(Recipe r : response.body()){
-                            Log.i(TAG, r.getName());
-                        }
+                        view.onDataReceived(response.body());
                     }else{
                         Log.w(TAG, "response body is null!");
                     }
