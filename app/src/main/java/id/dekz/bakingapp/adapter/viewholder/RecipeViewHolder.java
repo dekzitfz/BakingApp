@@ -30,9 +30,17 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Recipe data){
-        Glide.with(itemView.getContext())
-                .load(getImage(data.getId()))
-                .into(img);
+        if(data.getImage().equals("")){
+            Glide.with(itemView.getContext())
+                    .load(getImage(data.getId()))
+                    .into(img);
+        }else{
+            Glide.with(itemView.getContext())
+                    .load(data.getImage())
+                    .placeholder(R.drawable.placeholder)
+                    .into(img);
+        }
+
         name.setText(data.getName());
         servings.setText(data.getResolvedServings());
     }

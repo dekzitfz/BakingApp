@@ -18,7 +18,7 @@ public class RecipeImageGenerator {
             case 4 :
                 return R.drawable.cheesecake_img;
             default:
-                return R.drawable.nutella_pie_img;
+                return R.drawable.placeholder;
         }
     }
 }
