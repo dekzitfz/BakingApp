@@ -22,7 +22,7 @@ public class IngredientContract {
 
         public static final String RECIPE_ID = "recipe_id";
         public static final String INGREDIENT_QUANTITY = "ingredient_quantity";
-        public static final String INGREDIENT_measure = "ingredient_measure";
+        public static final String INGREDIENT_MEASURE = "ingredient_measure";
         public static final String INGREDIENT = "ingredient";
     }
 }
