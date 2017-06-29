@@ -32,7 +32,6 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
 
     private void setupRecyclerView(){
         adapter = new RecipeAdapter();
-        rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
     }
 
