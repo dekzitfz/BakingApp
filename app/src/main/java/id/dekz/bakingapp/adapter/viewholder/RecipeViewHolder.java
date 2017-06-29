@@ -5,10 +5,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.model.Recipe;
+
+import static id.dekz.bakingapp.util.RecipeImageGenerator.getImage;
 
 /**
  * Created by DEKZ on 6/27/2017.
@@ -26,7 +30,9 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Recipe data){
-        img.setImageResource(R.drawable.nutella_pie_img);
+        Glide.with(itemView.getContext())
+                .load(getImage(data.getId()))
+                .into(img);
         name.setText(data.getName());
         servings.setText(data.getResolvedServings());
     }
