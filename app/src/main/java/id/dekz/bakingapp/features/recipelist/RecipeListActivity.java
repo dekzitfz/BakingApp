@@ -53,6 +53,12 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        onDetachView();
+    }
+
+    @Override
     public void onDataReceived(List<Recipe> data) {
         adapter.replaceAll(data);
     }

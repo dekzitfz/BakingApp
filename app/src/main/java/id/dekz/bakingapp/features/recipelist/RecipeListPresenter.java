@@ -3,7 +3,6 @@ package id.dekz.bakingapp.features.recipelist;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.OperationApplicationException;
-import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
