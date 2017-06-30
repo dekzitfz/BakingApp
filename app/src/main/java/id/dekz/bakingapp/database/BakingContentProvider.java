@@ -1,13 +1,19 @@
 package id.dekz.bakingapp.database;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+
+import static id.dekz.bakingapp.database.contract.RecipeContract.RecipeEntry;
 
 import static id.dekz.bakingapp.database.contract.IngredientContract.PATH_INGREDIENTS;
 import static id.dekz.bakingapp.database.contract.RecipeContract.PATH_RECIPES;
@@ -61,7 +67,26 @@ public class BakingContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+        Uri result = null;
+
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int match = uriMatcher.match(uri);
+        switch (match){
+            case RECIPES:
+                long id = db.insert(RecipeEntry.TABLE_NAME, null, values);
+                if(id > 0){
+                    result = ContentUris.withAppendedId(uri, id);
+                    //noinspection ConstantConditions
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }else{
+                    Log.w(TAG, "inserting recipe data was failed!");
+                }
+                break;
+            default:
+                Log.w(TAG, "unknown URI: "+uri);
+        }
+
+        return result;
     }
 
     @Override

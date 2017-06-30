@@ -1,5 +1,6 @@
 package id.dekz.bakingapp.features.recipelist;
 
+import android.content.ContentResolver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,5 +65,10 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     @Override
     public void onWarningMessageReceived(String message) {
 
+    }
+
+    @Override
+    public ContentResolver getResolver() {
+        return getContentResolver();
     }
 }

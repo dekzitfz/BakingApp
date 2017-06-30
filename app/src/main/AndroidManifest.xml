@@ -19,6 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:exported="false"
+            android:authorities="id.dekz.bakingapp"
+            android:name=".database.BakingContentProvider"/>
     </application>
 
 </manifest>

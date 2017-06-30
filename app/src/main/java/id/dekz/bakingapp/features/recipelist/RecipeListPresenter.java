@@ -1,5 +1,6 @@
 package id.dekz.bakingapp.features.recipelist;
 
+import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -7,6 +8,7 @@ import java.util.List;
 
 import id.dekz.bakingapp.App;
 import id.dekz.bakingapp.basemvp.BasePresenter;
+import static id.dekz.bakingapp.database.contract.RecipeContract.RecipeEntry;
 import id.dekz.bakingapp.model.Recipe;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,12 +42,15 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                 .getRecipes();
 
         recipeCall.enqueue(new Callback<List<Recipe>>() {
+            @SuppressWarnings("ConstantConditions")
             @Override
             public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull Response<List<Recipe>> response) {
                 if(response.isSuccessful()){
                     if(response.body() != null){
-                        //noinspection ConstantConditions
                         view.onDataReceived(response.body());
+                        for(Recipe r : response.body()){
+                            saveData(r);
+                        }
                     }else{
                         Log.w(TAG, "response body is null!");
                     }
@@ -59,5 +64,15 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                 t.printStackTrace();
             }
         });
+    }
+
+    void saveData(Recipe recipe){
+        ContentValues values = new ContentValues();
+        values.put(RecipeEntry.RECIPE_ID, recipe.getId());
+        values.put(RecipeEntry.RECIPE_NAME, recipe.getName());
+        values.put(RecipeEntry.RECIPE_IMAGE, recipe.getImage());
+        values.put(RecipeEntry.RECIPE_SERVINGS, recipe.getServings());
+
+        view.getResolver().insert(RecipeEntry.CONTENT_URI, values);
     }
 }
