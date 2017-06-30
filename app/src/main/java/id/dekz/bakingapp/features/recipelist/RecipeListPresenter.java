@@ -1,9 +1,14 @@
 package id.dekz.bakingapp.features.recipelist;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
+import android.os.AsyncTask;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import id.dekz.bakingapp.App;
@@ -16,6 +21,7 @@ import static id.dekz.bakingapp.database.contract.StepContract.StepEntry;
 import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
 import id.dekz.bakingapp.model.Step;
+import id.dekz.bakingapp.util.Constant;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,6 +36,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
     private static final String TAG = RecipeListPresenter.class.getSimpleName();
 
     private Call<List<Recipe>> recipeCall;
+    private ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
     @Override
     public void onAttach(RecipeListView BaseView) {
@@ -50,13 +57,15 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         recipeCall.enqueue(new Callback<List<Recipe>>() {
             @SuppressWarnings("ConstantConditions")
             @Override
-            public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull Response<List<Recipe>> response) {
+            public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull final Response<List<Recipe>> response) {
                 if(response.isSuccessful()){
                     if(response.body() != null){
                         view.onDataReceived(response.body());
+
                         for(Recipe r : response.body()){
                             saveRecipeData(r);
                         }
+                        insertAllCV();
                     }else{
                         Log.w(TAG, "response body is null!");
                     }
@@ -79,7 +88,15 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         recipeValues.put(RecipeEntry.RECIPE_IMAGE, recipe.getImage());
         recipeValues.put(RecipeEntry.RECIPE_SERVINGS, recipe.getServings());
 
-        view.getResolver().insert(RecipeEntry.CONTENT_URI, recipeValues);
+        operations.add(
+                ContentProviderOperation.newInsert(RecipeEntry.CONTENT_URI)
+                        .withValues(recipeValues)
+                        .build()
+        );
+
+
+
+        //view.getResolver().insert(RecipeEntry.CONTENT_URI, recipeValues);
 
         for(Ingredient i : recipe.getIngredients()){
             saveIngredientData(i, recipe.getId());
@@ -90,6 +107,14 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         }
     }
 
+    private void insertAllCV(){
+        try {
+            view.getResolver().applyBatch(Constant.AUTHORITY, operations);
+        } catch (RemoteException | OperationApplicationException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void saveIngredientData(Ingredient ingredient, int recipeID){
         ContentValues ingredientValues = new ContentValues();
         ingredientValues.put(IngredientEntry.RECIPE_ID, recipeID);
@@ -97,7 +122,13 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         ingredientValues.put(IngredientEntry.INGREDIENT_MEASURE, ingredient.getMeasure());
         ingredientValues.put(IngredientEntry.INGREDIENT, ingredient.getIngredient());
 
-        view.getResolver().insert(IngredientEntry.CONTENT_URI, ingredientValues);
+        operations.add(
+                ContentProviderOperation.newInsert(IngredientEntry.CONTENT_URI)
+                        .withValues(ingredientValues)
+                        .build()
+        );
+        //listCVs.add(ingredientValues);
+        //view.getResolver().insert(IngredientEntry.CONTENT_URI, ingredientValues);
     }
 
     private void saveStepData(Step step, int recipeID){
@@ -109,6 +140,13 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         stepValues.put(StepEntry.STEP_THUMBNAIL_URL, step.getThumbnailURL());
         stepValues.put(StepEntry.STEP_VIDEO_URL, step.getVideoURL());
 
-        view.getResolver().insert(StepEntry.CONTENT_URI, stepValues);
+        operations.add(
+                ContentProviderOperation.newInsert(StepEntry.CONTENT_URI)
+                        .withValues(stepValues)
+                        .build()
+        );
+        //listCVs.add(stepValues);
+        //view.getResolver().insert(StepEntry.CONTENT_URI, stepValues);
     }
+
 }
