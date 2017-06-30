@@ -12,7 +12,7 @@ import static id.dekz.bakingapp.util.Constant.AUTHORITY;
 public class RecipeContract {
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
-    public static final String PATH_RECIPES = "favorites";
+    public static final String PATH_RECIPES = "recipes";
 
     public static final class RecipeEntry implements BaseColumns {
         public static final Uri CONTENT_URI =
