@@ -34,6 +34,7 @@ import static id.dekz.bakingapp.util.Constant.AUTHORITY;
  * Created by DEKZ on 6/30/2017.
  */
 
+@SuppressWarnings("ConstantConditions")
 public class BakingContentProvider extends ContentProvider {
 
     private static final String TAG = BakingContentProvider.class.getSimpleName();
@@ -78,7 +79,6 @@ public class BakingContentProvider extends ContentProvider {
         return null;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
@@ -124,7 +124,27 @@ public class BakingContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        int result = 0;
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        int match = uriMatcher.match(uri);
+        switch (match){
+            case RECIPES:
+                result = db.delete(RecipeEntry.TABLE_NAME, null, null);
+                break;
+            case INGREDIENTS:
+                result = db.delete(IngredientEntry.TABLE_NAME, null, null);
+                break;
+            case STEPS:
+                result = db.delete(StepEntry.TABLE_NAME, null, null);
+                break;
+            default:
+                Log.w(TAG, "Unknown URI: " + uri);
+        }
+
+        if(result > 0) getContext().getContentResolver().notifyChange(uri, null);
+
+        return result;
     }
 
     @Override
@@ -178,9 +198,8 @@ public class BakingContentProvider extends ContentProvider {
     public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> operations) throws OperationApplicationException {
         ContentProviderResult[] result = new ContentProviderResult[operations
                 .size()];
-        // Opens the database object in "write" mode.
+
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
-        // Begin a transaction
         db.beginTransaction();
         try {
             final int numOperations = operations.size();

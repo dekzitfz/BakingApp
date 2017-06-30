@@ -62,6 +62,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                     if(response.body() != null){
                         view.onDataReceived(response.body());
 
+                        clearPreviousData();
                         for(Recipe r : response.body()){
                             saveRecipeData(r);
                         }
@@ -94,10 +95,6 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                         .build()
         );
 
-
-
-        //view.getResolver().insert(RecipeEntry.CONTENT_URI, recipeValues);
-
         for(Ingredient i : recipe.getIngredients()){
             saveIngredientData(i, recipe.getId());
         }
@@ -115,6 +112,12 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         }
     }
 
+    private void clearPreviousData(){
+        view.getResolver().delete(RecipeEntry.CONTENT_URI, null, null);
+        view.getResolver().delete(IngredientEntry.CONTENT_URI, null, null);
+        view.getResolver().delete(StepEntry.CONTENT_URI, null, null);
+    }
+
     private void saveIngredientData(Ingredient ingredient, int recipeID){
         ContentValues ingredientValues = new ContentValues();
         ingredientValues.put(IngredientEntry.RECIPE_ID, recipeID);
@@ -127,8 +130,6 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                         .withValues(ingredientValues)
                         .build()
         );
-        //listCVs.add(ingredientValues);
-        //view.getResolver().insert(IngredientEntry.CONTENT_URI, ingredientValues);
     }
 
     private void saveStepData(Step step, int recipeID){
@@ -145,8 +146,6 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                         .withValues(stepValues)
                         .build()
         );
-        //listCVs.add(stepValues);
-        //view.getResolver().insert(StepEntry.CONTENT_URI, stepValues);
     }
 
 }
