@@ -76,6 +76,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        swipeRefresh.setOnRefreshListener(null);
         onDetachView();
     }
 
