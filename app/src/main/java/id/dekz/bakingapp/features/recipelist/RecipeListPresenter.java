@@ -58,6 +58,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
     }
 
     void loadData(){
+        view.onDataLoading();
         recipeCall = App.getRestClient()
                 .getService()
                 .getRecipes();
@@ -87,7 +88,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
 
             @Override
             public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
-                t.printStackTrace();
+                //t.printStackTrace();
                 initLoader();
             }
         });
@@ -175,6 +176,8 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                                 + data.get(i).getSteps().size()+" steps");
                     }*/
                     view.onDataReceived(data);
+                }else{
+                    view.onWarningMessageReceived("Could Not Load Data");
                 }
             }
 

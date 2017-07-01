@@ -4,11 +4,13 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.adapter.RecipeAdapter;
 import id.dekz.bakingapp.model.Recipe;
 
-public class RecipeListActivity extends AppCompatActivity implements RecipeListView {
+public class RecipeListActivity extends AppCompatActivity implements RecipeListView, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = RecipeListActivity.class.getSimpleName();
     private static final String KEY_SCROLL_STATE = "scroll_state";
@@ -29,6 +31,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
 
     @BindView(R.id.rv_recipe)RecyclerView rv;
     @BindView(R.id.toolbar)Toolbar toolbar;
+    @BindView(R.id.swipe_refresh)SwipeRefreshLayout swipeRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     private void setupRecyclerView(){
         adapter = new RecipeAdapter();
         rv.setAdapter(adapter);
+        swipeRefresh.setOnRefreshListener(this);
     }
 
     @Override
@@ -77,6 +81,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
 
     @Override
     public void onDataReceived(List<Recipe> data) {
+        swipeRefresh.setRefreshing(false);
         adapter.replaceAll(data);
         if(layoutManagerSavedState!=null){
             rv.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
@@ -84,13 +89,14 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     }
 
     @Override
-    public void onFailure() {
-
+    public void onDataLoading() {
+        swipeRefresh.setRefreshing(true);
     }
 
     @Override
     public void onWarningMessageReceived(String message) {
-
+        swipeRefresh.setRefreshing(false);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -109,4 +115,8 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     }
 
 
+    @Override
+    public void onRefresh() {
+        presenter.loadData();
+    }
 }

@@ -15,8 +15,8 @@ import id.dekz.bakingapp.model.Recipe;
 
 public interface RecipeListView extends BaseView {
     void onDataReceived(List<Recipe> data);
-    void onFailure();
     void onWarningMessageReceived(String message);
+    void onDataLoading();
     ContentResolver getResolver();
     Context getContext();
     LoaderManager getLoaderManagerFromActivity();
