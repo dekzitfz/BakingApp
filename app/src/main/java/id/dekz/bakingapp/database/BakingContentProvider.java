@@ -70,7 +70,29 @@ public class BakingContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return null;
+        Cursor result = null;
+        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        int match = uriMatcher.match(uri);
+        switch (match){
+            case RECIPES:
+                result = db.query(
+                        RecipeEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+
+                result.setNotificationUri(getContext().getContentResolver(), uri);
+                break;
+            default:
+                Log.w(TAG, "Unknown URI: " + uri);
+        }
+
+        return result;
     }
 
     @Nullable

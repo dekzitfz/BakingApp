@@ -1,6 +1,8 @@
 package id.dekz.bakingapp.features.recipelist;
 
 import android.content.ContentResolver;
+import android.content.Context;
+import android.support.v4.app.LoaderManager;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface RecipeListView extends BaseView {
     void onFailure();
     void onWarningMessageReceived(String message);
     ContentResolver getResolver();
+    Context getContext();
+    LoaderManager getLoaderManagerFromActivity();
 }

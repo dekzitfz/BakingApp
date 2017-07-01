@@ -3,8 +3,12 @@ package id.dekz.bakingapp.features.recipelist;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.OperationApplicationException;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -21,6 +25,7 @@ import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
 import id.dekz.bakingapp.model.Step;
 import id.dekz.bakingapp.util.Constant;
+import id.dekz.bakingapp.util.RecipeLoader;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,10 +41,13 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
 
     private Call<List<Recipe>> recipeCall;
     private ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+    private LoaderManager.LoaderCallbacks<List<Recipe>> loaderCallbacks;
+    private static final int LOADER_ID = 321;
 
     @Override
     public void onAttach(RecipeListView BaseView) {
         view = BaseView;
+        setupLoader();
     }
 
     @Override
@@ -77,6 +85,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
             @Override
             public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
                 t.printStackTrace();
+                initLoader();
             }
         });
     }
@@ -145,6 +154,37 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                         .withValues(stepValues)
                         .build()
         );
+    }
+
+    private void setupLoader(){
+        loaderCallbacks = new LoaderManager.LoaderCallbacks<List<Recipe>>() {
+            @Override
+            public Loader<List<Recipe>> onCreateLoader(int id, Bundle args) {
+                return new RecipeLoader(view.getContext(), view.getResolver());
+            }
+
+            @Override
+            public void onLoadFinished(Loader<List<Recipe>> loader, List<Recipe> data) {
+                if(data != null && data.size() > 0){
+                    for(int i=0; i<data.size(); i++){
+                        Log.i(TAG, data.get(i).getName());
+                    }
+                }
+            }
+
+            @Override
+            public void onLoaderReset(Loader<List<Recipe>> loader) {
+
+            }
+        };
+    }
+
+    void initLoader(){
+        view.getLoaderManagerFromActivity().initLoader(LOADER_ID, null, loaderCallbacks);
+    }
+
+    void restartLoader(){
+        view.getLoaderManagerFromActivity().restartLoader(LOADER_ID, null, loaderCallbacks);
     }
 
 }
