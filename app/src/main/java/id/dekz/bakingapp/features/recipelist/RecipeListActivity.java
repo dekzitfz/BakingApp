@@ -2,6 +2,7 @@ package id.dekz.bakingapp.features.recipelist;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,8 +20,12 @@ import id.dekz.bakingapp.model.Recipe;
 
 public class RecipeListActivity extends AppCompatActivity implements RecipeListView {
 
+    private static final String TAG = RecipeListActivity.class.getSimpleName();
+    private static final String KEY_SCROLL_STATE = "scroll_state";
+
     private RecipeListPresenter presenter;
     private RecipeAdapter adapter;
+    private Parcelable layoutManagerSavedState;
 
     @BindView(R.id.rv_recipe)RecyclerView rv;
     @BindView(R.id.toolbar)Toolbar toolbar;
@@ -31,10 +36,20 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
         setContentView(R.layout.activity_recipe_list);
         ButterKnife.bind(this);
 
+        if(savedInstanceState != null){
+            layoutManagerSavedState = savedInstanceState.getParcelable(KEY_SCROLL_STATE);
+        }
+
         setSupportActionBar(toolbar);
 
         setupRecyclerView();
         onAttachView();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_SCROLL_STATE, rv.getLayoutManager().onSaveInstanceState());
     }
 
     private void setupRecyclerView(){
@@ -63,6 +78,9 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     @Override
     public void onDataReceived(List<Recipe> data) {
         adapter.replaceAll(data);
+        if(layoutManagerSavedState!=null){
+            rv.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }
     }
 
     @Override
