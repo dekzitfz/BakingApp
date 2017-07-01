@@ -53,6 +53,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
     @Override
     public void onDetach() {
         if(recipeCall != null) recipeCall.cancel();
+        view.getLoaderManagerFromActivity().destroyLoader(LOADER_ID);
         view = null;
     }
 
@@ -76,9 +77,11 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                         insertAllCV();
                     }else{
                         Log.w(TAG, "response body is null!");
+                        initLoader();
                     }
                 }else{
                     Log.w(TAG, "response code: "+response.code());
+                    initLoader();
                 }
             }
 
@@ -166,9 +169,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
             @Override
             public void onLoadFinished(Loader<List<Recipe>> loader, List<Recipe> data) {
                 if(data != null && data.size() > 0){
-                    for(int i=0; i<data.size(); i++){
-                        Log.i(TAG, data.get(i).getName());
-                    }
+                    view.onDataReceived(data);
                 }
             }
 
