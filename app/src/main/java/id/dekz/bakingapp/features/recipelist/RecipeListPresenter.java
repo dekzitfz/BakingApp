@@ -169,6 +169,11 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
             @Override
             public void onLoadFinished(Loader<List<Recipe>> loader, List<Recipe> data) {
                 if(data != null && data.size() > 0){
+                    /*for(int i=0; i<data.size(); i++){
+                        Log.i(TAG, data.get(i).getName()
+                                + " with "+data.get(i).getIngredients().size()+" ingredients and "
+                                + data.get(i).getSteps().size()+" steps");
+                    }*/
                     view.onDataReceived(data);
                 }
             }

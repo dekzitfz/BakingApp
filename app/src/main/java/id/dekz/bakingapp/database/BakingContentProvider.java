@@ -71,6 +71,8 @@ public class BakingContentProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         Cursor result = null;
+        String whereClause;
+        String id;
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         int match = uriMatcher.match(uri);
@@ -85,8 +87,29 @@ public class BakingContentProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
-
                 result.setNotificationUri(getContext().getContentResolver(), uri);
+                break;
+            case INGREDIENTS_WITH_RECIPE_ID:
+                whereClause = IngredientEntry.RECIPE_ID + "=?";
+                id = uri.getPathSegments().get(1);
+                result = db.query(
+                        IngredientEntry.TABLE_NAME,
+                        projection,
+                        whereClause,
+                        new String[]{id},
+                        null, null, null
+                        );
+                break;
+            case STEPS_WITH_RECIPE_ID:
+                whereClause = StepEntry.RECIPE_ID + "=?";
+                id = uri.getPathSegments().get(1);
+                result = db.query(
+                        StepEntry.TABLE_NAME,
+                        projection,
+                        whereClause,
+                        new String[]{id},
+                        null, null, null
+                );
                 break;
             default:
                 Log.w(TAG, "Unknown URI: " + uri);
