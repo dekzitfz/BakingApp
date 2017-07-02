@@ -12,13 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".features.recipelist.RecipeListActivity">
+        <activity
+            android:name=".features.recipelist.RecipeListActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".features.recipedetail.RecipeDetailActivity"/>
         <provider
             android:exported="false"
             android:authorities="id.dekz.bakingapp"
