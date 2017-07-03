@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,8 @@ import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.adapter.StepAdapter;
 import id.dekz.bakingapp.model.Recipe;
+
+import static android.support.v7.recyclerview.R.attr.layoutManager;
 
 /**
  * Created by DEKZ on 7/2/2017.
@@ -73,7 +76,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         stepAdapter = new StepAdapter();
         rvStep.setLayoutManager(new LinearLayoutManager(this));
         rvStep.setAdapter(stepAdapter);
-        //rvStep.setNestedScrollingEnabled(false);
+        rvStep.addItemDecoration(new DividerItemDecoration(rvStep.getContext(),
+                LinearLayoutManager.VERTICAL));
     }
 
     @Override
