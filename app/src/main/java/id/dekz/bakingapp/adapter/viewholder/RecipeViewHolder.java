@@ -1,15 +1,18 @@
 package id.dekz.bakingapp.adapter.viewholder;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
+import id.dekz.bakingapp.features.recipedetail.RecipeDetailActivity;
 import id.dekz.bakingapp.model.Recipe;
 
 import static id.dekz.bakingapp.util.RecipeImageGenerator.getImage;
@@ -29,7 +32,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bind(Recipe data){
+    public void bind(final Recipe data){
         if(data.getImage().equals("")){
             Glide.with(itemView.getContext())
                     .load(getImage(data.getId()))
@@ -43,5 +46,14 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
         name.setText(data.getName());
         servings.setText(data.getResolvedServings());
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent detail = new Intent(itemView.getContext(), RecipeDetailActivity.class);
+                detail.putExtra(Intent.EXTRA_TEXT, new Gson().toJson(data));
+                itemView.getContext().startActivity(detail);
+            }
+        });
     }
 }
