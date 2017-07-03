@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView
+    android:id="@+id/tv_step"
     android:paddingStart="6dp"
     android:paddingLeft="6dp"
     android:paddingRight="6dp"

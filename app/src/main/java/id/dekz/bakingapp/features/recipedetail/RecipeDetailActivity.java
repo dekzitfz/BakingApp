@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
+import id.dekz.bakingapp.adapter.StepAdapter;
 import id.dekz.bakingapp.model.Recipe;
 
 /**
@@ -19,8 +23,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     private RecipeDetailPresenter presenter;
     private String jsonStr;
+    private StepAdapter stepAdapter;
 
     @BindView(R.id.tv_ingredients)TextView ingredients;
+    @BindView(R.id.toolbar)Toolbar toolbar;
+    @BindView(R.id.rv_steps)RecyclerView rvStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +35,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         setContentView(R.layout.activity_recipe_detail);
         ButterKnife.bind(this);
 
+        setSupportActionBar(toolbar);
+
         jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
+        setupRV();
         onAttachView();
     }
 
@@ -54,6 +64,21 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     @Override
     public void bindData(Recipe recipe) {
+        getSupportActionBar().setTitle(recipe.getName());
         ingredients.setText(presenter.getEachIngredient(recipe.getIngredients()));
+        stepAdapter.replaceAll(recipe.getSteps());
+    }
+
+    private void setupRV(){
+        stepAdapter = new StepAdapter();
+        rvStep.setLayoutManager(new LinearLayoutManager(this));
+        rvStep.setAdapter(stepAdapter);
+        //rvStep.setNestedScrollingEnabled(false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        RecipeDetailActivity.this.finish();
     }
 }
