@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -105,9 +107,6 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
 
     @Override
     public void onStepClicked(Step step) {
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, new RecipeDetailStepFragment())
-                .addToBackStack(null)
-                .commit();
+        presenter.addFragment(presenter.getDetailStepFragment(new Gson().toJson(step)));
     }
 }

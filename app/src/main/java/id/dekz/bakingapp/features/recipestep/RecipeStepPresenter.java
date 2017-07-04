@@ -6,7 +6,9 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.basemvp.BasePresenter;
+import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
 
@@ -55,6 +57,13 @@ public class RecipeStepPresenter implements BasePresenter<RecipeStepView> {
     }
 
     void addFragment(Fragment fragment){
+        view.getFragmentManagerFromFragment().beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
 
+    Fragment getDetailStepFragment(String json){
+        return RecipeDetailStepFragment.newInstance(json);
     }
 }

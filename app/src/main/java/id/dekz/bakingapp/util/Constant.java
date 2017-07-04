@@ -7,4 +7,5 @@ package id.dekz.bakingapp.util;
 public class Constant {
     public static final String AUTHORITY = "id.dekz.bakingapp";
     public static final String KEY_RECIPE = "key_recipe";
+    public static final String KEY_STEP = "key_step";
 }
