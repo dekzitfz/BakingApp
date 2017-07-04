@@ -1,10 +1,15 @@
 package id.dekz.bakingapp.features.recipedetail;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.widget.FrameLayout;
+
 import com.google.gson.Gson;
 
 import java.util.List;
 
 import id.dekz.bakingapp.basemvp.BasePresenter;
+import id.dekz.bakingapp.features.recipestep.RecipeStepFragment;
 import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
 
@@ -29,27 +34,17 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
         view = null;
     }
 
-    void getRecipeModel(String json){
-        view.bindData(gson.fromJson(json, Recipe.class));
+    void addFragment(Fragment fragment){
+        view.getFragmentManagerFromActivity().beginTransaction()
+                .add(view.getContainerID(), fragment)
+                .commit();
     }
 
-    public String getEachIngredient(List<Ingredient> data){
-        StringBuilder stringBuilder = new StringBuilder();
+    Fragment getStepFragment(String json){
+        return RecipeStepFragment.newInstance(json);
+    }
 
-        for(int i=0; i<data.size(); i++){
-            String name = data.get(i).getIngredient();
-            String measure = data.get(i).getMeasure();
-            String qty = String.valueOf(data.get(i).getQuantity());
-
-            String strToAppend = "- "+name+"("+qty+" "+measure+")";
-
-            if(i == data.size()-1){
-                stringBuilder.append(strToAppend);
-            }else{
-                stringBuilder.append(strToAppend).append("\n");
-            }
-        }
-
-        return stringBuilder.toString();
+    void getRecipeModel(String json){
+        view.bindData(gson.fromJson(json, Recipe.class));
     }
 }
