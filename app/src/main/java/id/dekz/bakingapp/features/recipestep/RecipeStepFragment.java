@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,14 +19,16 @@ import butterknife.Unbinder;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.adapter.StepAdapter;
 import id.dekz.bakingapp.features.recipedetail.RecipeDetailActivity;
+import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.model.Recipe;
+import id.dekz.bakingapp.model.Step;
 import id.dekz.bakingapp.util.Constant;
 
 /**
  * Created by DEKZ on 7/4/2017.
  */
 
-public class RecipeStepFragment extends Fragment implements RecipeStepView {
+public class RecipeStepFragment extends Fragment implements RecipeStepView, StepAdapter.OnStepClick {
 
     private RecipeStepPresenter presenter;
     private Unbinder unbinder;
@@ -84,6 +87,12 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     public void bindData(Recipe recipe) {
         ingredients.setText(presenter.getEachIngredient(recipe.getIngredients()));
         stepAdapter.replaceAll(recipe.getSteps());
+        stepAdapter.addClickListener(this);
+    }
+
+    @Override
+    public FragmentManager getFragmentManagerFromFragment() {
+        return getFragmentManager();
     }
 
     private void setupRV(){
@@ -92,5 +101,13 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
         rvStep.setAdapter(stepAdapter);
         rvStep.addItemDecoration(new DividerItemDecoration(rvStep.getContext(),
                 LinearLayoutManager.VERTICAL));
+    }
+
+    @Override
+    public void onStepClicked(Step step) {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, new RecipeDetailStepFragment())
+                .addToBackStack(null)
+                .commit();
     }
 }

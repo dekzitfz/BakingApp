@@ -1,5 +1,6 @@
 package id.dekz.bakingapp.adapter;
 
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,18 @@ import id.dekz.bakingapp.model.Step;
 public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepVH> {
 
     private List<Step> data = new ArrayList<>();
+    private OnStepClick onStepClick;
 
-    public StepAdapter() {
+    public interface OnStepClick{
+        void onStepClicked(Step step);
+    }
+
+    public void addClickListener(OnStepClick onStepClick){
+        this.onStepClick = onStepClick;
+    }
+
+    public StepAdapter(/*OnStepClick onStepClick*/) {
+        //this.onStepClick = onStepClick;
     }
 
     public void replaceAll(List<Step> data){
@@ -40,10 +51,17 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepVH> {
     }
 
     @Override
-    public void onBindViewHolder(StepVH holder, int position) {
+    public void onBindViewHolder(final StepVH holder, int position) {
         String idStep = String.valueOf(data.get(position).getId());
         String descStep = data.get(position).getShortDescription();
         holder.tvStep.setText(idStep+". "+descStep);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStepClick.onStepClicked(data.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override

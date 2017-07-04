@@ -87,5 +87,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+            getSupportFragmentManager().popBackStack();
+        }
     }
 }

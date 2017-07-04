@@ -38,6 +38,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+        onDetachView();
     }
 
     @Override
@@ -48,7 +49,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
     @Override
     public void onDetachView() {
-
+        presenter.onDetach();
     }
 
     @Override

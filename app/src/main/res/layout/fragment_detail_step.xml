@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        tool:text="2. Combine the cake flour, 400 grams (2 cups) of sugar, baking powder, and 1 teaspoon of salt in the bowl of a stand mixer. Using the paddle attachment, beat at low speed until the dry ingredients are mixed together, about one minute"
+        android:text="2. Combine the cake flour, 400 grams (2 cups) of sugar, baking powder, and 1 teaspoon of salt in the bowl of a stand mixer. Using the paddle attachment, beat at low speed until the dry ingredients are mixed together, about one minute"
         android:padding="10dp"
         android:id="@+id/tv_step_description"
         android:layout_width="match_parent"

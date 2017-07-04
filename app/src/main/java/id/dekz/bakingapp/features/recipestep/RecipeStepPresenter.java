@@ -1,5 +1,7 @@
 package id.dekz.bakingapp.features.recipestep;
 
+import android.support.v4.app.Fragment;
+
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -50,5 +52,9 @@ public class RecipeStepPresenter implements BasePresenter<RecipeStepView> {
         }
 
         return stringBuilder.toString();
+    }
+
+    void addFragment(Fragment fragment){
+
     }
 }

@@ -1,5 +1,7 @@
 package id.dekz.bakingapp.features.recipestep;
 
+import android.support.v4.app.FragmentManager;
+
 import id.dekz.bakingapp.basemvp.BaseView;
 import id.dekz.bakingapp.model.Recipe;
 
@@ -9,4 +11,5 @@ import id.dekz.bakingapp.model.Recipe;
 
 public interface RecipeStepView extends BaseView {
     void bindData(Recipe recipe);
+    FragmentManager getFragmentManagerFromFragment();
 }
