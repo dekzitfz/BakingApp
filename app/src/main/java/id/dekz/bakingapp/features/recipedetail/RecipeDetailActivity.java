@@ -25,7 +25,8 @@ import static android.support.v7.recyclerview.R.attr.layoutManager;
  * Created by DEKZ on 7/2/2017.
  */
 
-public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailView {
+public class RecipeDetailActivity extends AppCompatActivity
+        implements RecipeDetailView, RecipeStepFragment.OnStepSelected {
 
     private RecipeDetailPresenter presenter;
     private String jsonStr;
@@ -71,11 +72,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             presenter.getRecipeModel(jsonStr);
             if(isTwoPane){
                 presenter.addFragments(
-                        presenter.getStepFragment(jsonStr),
-                        presenter.getStepDetailFragment()
+                        presenter.getStepFragment(jsonStr, isTwoPane),
+                        presenter.getStepDetailFragment(null)
                 );
             }else{
-                presenter.addFragment(presenter.getStepFragment(jsonStr));
+                presenter.addFragment(presenter.getStepFragment(jsonStr, isTwoPane));
             }
         }
     }
@@ -110,5 +111,10 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
                 getSupportFragmentManager().popBackStack();
             }
         }
+    }
+
+    @Override
+    public void onstepselected(String stepJson) {
+        presenter.changeFragmentRight(presenter.getStepDetailFragment(stepJson));
     }
 }

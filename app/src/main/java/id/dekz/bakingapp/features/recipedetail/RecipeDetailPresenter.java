@@ -1,5 +1,6 @@
 package id.dekz.bakingapp.features.recipedetail;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.FrameLayout;
@@ -49,12 +50,18 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
                 .commit();
     }
 
-    Fragment getStepDetailFragment(){
-        return RecipeDetailStepFragment.newInstance(null);
+    void changeFragmentRight(Fragment fragment){
+        view.getFragmentManagerFromActivity().beginTransaction()
+                .replace(R.id.container_right, fragment)
+                .commit();
     }
 
-    Fragment getStepFragment(String json){
-        return RecipeStepFragment.newInstance(json);
+    Fragment getStepDetailFragment(@Nullable String json){
+        return RecipeDetailStepFragment.newInstance(json);
+    }
+
+    Fragment getStepFragment(String json, boolean isTwoPane){
+        return RecipeStepFragment.newInstance(json, isTwoPane);
     }
 
     void getRecipeModel(String json){

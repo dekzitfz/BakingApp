@@ -11,6 +11,7 @@ import id.dekz.bakingapp.basemvp.BasePresenter;
 import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
+import id.dekz.bakingapp.model.Step;
 
 /**
  * Created by DEKZ on 7/4/2017.
@@ -34,6 +35,10 @@ public class RecipeStepPresenter implements BasePresenter<RecipeStepView> {
 
     void getRecipeModel(String json){
         view.bindData(gson.fromJson(json, Recipe.class));
+    }
+
+    String getJsonStep(Step step){
+        return gson.toJson(step);
     }
 
     public String getEachIngredient(List<Ingredient> data){

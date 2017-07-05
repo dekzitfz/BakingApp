@@ -1,5 +1,6 @@
 package id.dekz.bakingapp.features.recipestep;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,6 +36,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
     private RecipeStepPresenter presenter;
     private Unbinder unbinder;
     private StepAdapter stepAdapter;
+    private OnStepSelected onStepSelected;
 
     @BindView(R.id.tv_ingredients)TextView ingredients;
     @BindView(R.id.rv_steps)RecyclerView rvStep;
@@ -42,13 +44,29 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
     public RecipeStepFragment() {
     }
 
-    public static RecipeStepFragment newInstance(String json){
+    public interface OnStepSelected{
+        void onstepselected(String stepJson);
+    }
+
+    public static RecipeStepFragment newInstance(String json, boolean isTwoPane){
         RecipeStepFragment fragment = new RecipeStepFragment();
         Bundle bundle = new Bundle();
+        bundle.putBoolean(Constant.KEY_IS_TWO_PANE, isTwoPane);
         bundle.putString(Constant.KEY_RECIPE, json);
         fragment.setArguments(bundle);
 
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            onStepSelected = (OnStepSelected) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnStepSelected");
+        }
     }
 
     @Nullable
@@ -107,6 +125,10 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
 
     @Override
     public void onStepClicked(Step step) {
-        presenter.addFragment(presenter.getDetailStepFragment(new Gson().toJson(step)));
+        if(getArguments().getBoolean(Constant.KEY_IS_TWO_PANE, false)){
+            onStepSelected.onstepselected(presenter.getJsonStep(step));
+        }else{
+            presenter.addFragment(presenter.getDetailStepFragment(presenter.getJsonStep(step)));
+        }
     }
 }
