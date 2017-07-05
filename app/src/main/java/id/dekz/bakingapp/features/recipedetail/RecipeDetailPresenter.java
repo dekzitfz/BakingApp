@@ -8,7 +8,9 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.basemvp.BasePresenter;
+import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.features.recipestep.RecipeStepFragment;
 import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
@@ -38,6 +40,17 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
         view.getFragmentManagerFromActivity().beginTransaction()
                 .add(view.getContainerID(), fragment)
                 .commit();
+    }
+
+    void addFragments(Fragment left, Fragment right){
+        view.getFragmentManagerFromActivity().beginTransaction()
+                .add(R.id.container_left, left)
+                .add(R.id.container_right, right)
+                .commit();
+    }
+
+    Fragment getStepDetailFragment(){
+        return RecipeDetailStepFragment.newInstance(null);
     }
 
     Fragment getStepFragment(String json){

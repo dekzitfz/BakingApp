@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -28,6 +29,9 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
     @BindView(R.id.player)SimpleExoPlayerView player;
     @BindView(R.id.tv_step_description)TextView description;
+
+    @BindView(R.id.tv_unselected_step)TextView unselectedStepView;
+    @BindView(R.id.view_detail_step)LinearLayout selectedStepView;
 
     public static RecipeDetailStepFragment newInstance(String json){
         RecipeDetailStepFragment fragment = new RecipeDetailStepFragment();
@@ -65,7 +69,12 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
         String json = getArguments().getString(Constant.KEY_STEP);
         if(json != null){
+            selectedStepView.setVisibility(View.VISIBLE);
+            unselectedStepView.setVisibility(View.GONE);
             presenter.getStepModel(json);
+        }else{
+            selectedStepView.setVisibility(View.GONE);
+            unselectedStepView.setVisibility(View.VISIBLE);
         }
     }
 

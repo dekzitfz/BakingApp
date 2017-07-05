@@ -29,9 +29,15 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     private RecipeDetailPresenter presenter;
     private String jsonStr;
+    private boolean isTwoPane = false;
 
     @BindView(R.id.toolbar)Toolbar toolbar;
-    @BindView(R.id.container)FrameLayout container;
+
+    @Nullable @BindView(R.id.container)FrameLayout container;
+
+    //container for tab
+    @Nullable @BindView(R.id.container_left)FrameLayout containerLeft;
+    @Nullable @BindView(R.id.container_right)FrameLayout containerRight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +63,20 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         presenter = new RecipeDetailPresenter();
         presenter.onAttach(this);
 
+        if(container == null){
+            isTwoPane = true;
+        }
 
         if(jsonStr != null){
             presenter.getRecipeModel(jsonStr);
-            presenter.addFragment(presenter.getStepFragment(jsonStr));
+            if(isTwoPane){
+                presenter.addFragments(
+                        presenter.getStepFragment(jsonStr),
+                        presenter.getStepDetailFragment()
+                );
+            }else{
+                presenter.addFragment(presenter.getStepFragment(jsonStr));
+            }
         }
     }
 
@@ -87,8 +103,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-            getSupportFragmentManager().popBackStack();
+        if(isTwoPane){
+            RecipeDetailActivity.this.finish();
+        }else{
+            if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+                getSupportFragmentManager().popBackStack();
+            }
         }
     }
 }
