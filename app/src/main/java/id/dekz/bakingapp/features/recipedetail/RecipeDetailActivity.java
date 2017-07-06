@@ -3,6 +3,7 @@ package id.dekz.bakingapp.features.recipedetail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.adapter.StepAdapter;
+import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.features.recipestep.RecipeStepFragment;
 import id.dekz.bakingapp.model.Recipe;
 
@@ -26,7 +28,9 @@ import static android.support.v7.recyclerview.R.attr.layoutManager;
  */
 
 public class RecipeDetailActivity extends AppCompatActivity
-        implements RecipeDetailView, RecipeStepFragment.OnStepSelected {
+        implements RecipeDetailView,
+        RecipeStepFragment.OnStepSelected,
+        RecipeDetailStepFragment.StepNavigationClickListener {
 
     private RecipeDetailPresenter presenter;
     private String jsonStr;
@@ -73,7 +77,7 @@ public class RecipeDetailActivity extends AppCompatActivity
             if(isTwoPane){
                 presenter.addFragments(
                         presenter.getStepFragment(jsonStr, isTwoPane),
-                        presenter.getStepDetailFragment(null)
+                        presenter.getStepDetailFragment(null ,0 ,0)
                 );
             }else{
                 presenter.addFragment(presenter.getStepFragment(jsonStr, isTwoPane));
@@ -113,8 +117,20 @@ public class RecipeDetailActivity extends AppCompatActivity
         }
     }
 
+    //only for twopane
     @Override
     public void onstepselected(String stepJson) {
-        presenter.changeFragmentRight(presenter.getStepDetailFragment(stepJson));
+        presenter.changeFragmentRight(presenter.getStepDetailFragment(stepJson, 0, 0));
+    }
+
+    @Override
+    public void onNavigateStep(int targetPosition, int totalPosition) {
+        presenter.replaceFragment(
+                presenter.getStepDetailFragment(
+                        presenter.getStepJsonByIndex(jsonStr, targetPosition),
+                        targetPosition,
+                        totalPosition
+                )
+        );
     }
 }

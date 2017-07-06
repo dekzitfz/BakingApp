@@ -10,6 +10,7 @@
     xmlns:tool="http://schemas.android.com/tools">
 
     <LinearLayout
+        android:background="@color/icons"
         android:descendantFocusability="blocksDescendants"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

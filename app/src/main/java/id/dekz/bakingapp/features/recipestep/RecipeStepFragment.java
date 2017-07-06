@@ -124,11 +124,17 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
     }
 
     @Override
-    public void onStepClicked(Step step) {
+    public void onStepClicked(Step step, int stepNumber, int totalSteps) {
         if(getArguments().getBoolean(Constant.KEY_IS_TWO_PANE, false)){
             onStepSelected.onstepselected(presenter.getJsonStep(step));
         }else{
-            presenter.addFragment(presenter.getDetailStepFragment(presenter.getJsonStep(step)));
+            presenter.addFragment(
+                    presenter.getDetailStepFragment(
+                            presenter.getJsonStep(step),
+                            stepNumber,
+                            totalSteps
+                    )
+            );
         }
     }
 }

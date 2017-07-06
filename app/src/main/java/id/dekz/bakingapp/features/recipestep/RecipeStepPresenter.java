@@ -68,7 +68,7 @@ public class RecipeStepPresenter implements BasePresenter<RecipeStepView> {
                 .commit();
     }
 
-    Fragment getDetailStepFragment(String json){
-        return RecipeDetailStepFragment.newInstance(json);
+    Fragment getDetailStepFragment(String json, int currentStep, int totalStep){
+        return RecipeDetailStepFragment.newInstance(json, currentStep, totalStep);
     }
 }

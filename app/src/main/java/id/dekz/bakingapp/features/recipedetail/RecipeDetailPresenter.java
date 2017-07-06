@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import id.dekz.bakingapp.R;
@@ -15,6 +16,7 @@ import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.features.recipestep.RecipeStepFragment;
 import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
+import id.dekz.bakingapp.model.Step;
 
 /**
  * Created by DEKZ on 7/2/2017.
@@ -37,6 +39,12 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
         view = null;
     }
 
+    void replaceFragment(Fragment fragment){
+        view.getFragmentManagerFromActivity().beginTransaction()
+                .replace(R.id.container, fragment, "removable")
+                .commit();
+    }
+
     void addFragment(Fragment fragment){
         view.getFragmentManagerFromActivity().beginTransaction()
                 .add(view.getContainerID(), fragment)
@@ -56,8 +64,8 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
                 .commit();
     }
 
-    Fragment getStepDetailFragment(@Nullable String json){
-        return RecipeDetailStepFragment.newInstance(json);
+    Fragment getStepDetailFragment(@Nullable String json, int currentStep, int totalStep){
+        return RecipeDetailStepFragment.newInstance(json, currentStep, totalStep);
     }
 
     Fragment getStepFragment(String json, boolean isTwoPane){
@@ -66,5 +74,22 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
 
     void getRecipeModel(String json){
         view.bindData(gson.fromJson(json, Recipe.class));
+    }
+
+    List<Step> getListSteps(String json){
+        List<Step> result = new ArrayList<>();
+        Recipe recipe = gson.fromJson(json, Recipe.class);
+        if(recipe != null){
+            for(Step s : recipe.getSteps()){
+                result.add(s);
+            }
+        }
+
+        return result;
+    }
+
+    String getStepJsonByIndex(String jsonRecipe, int indexID){
+        Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
+        return gson.toJson(recipe.getSteps().get(indexID));
     }
 }

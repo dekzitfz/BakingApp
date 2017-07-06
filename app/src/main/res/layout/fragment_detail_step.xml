@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:visibility="gone"
@@ -40,12 +40,45 @@
             android:layout_width="match_parent"
             android:layout_height="0dp" />
 
-        <TextView
+        <LinearLayout
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
             android:layout_weight="0.2"
-            android:text="NAVIGATE HERE"
             android:padding="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="0dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:weightSum="1.0">
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_gravity="center_vertical"
+                app:fabSize="mini"
+                android:id="@+id/fab_previous"
+                android:src="@drawable/ic_nav_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_step_position"
+                android:layout_marginLeft="35dp"
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="35dp"
+                android:layout_marginRight="35dp"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                tool:text="Step 5/9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_gravity="center_vertical"
+                app:fabSize="mini"
+                android:id="@+id/fab_next"
+                android:src="@drawable/ic_nav_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
