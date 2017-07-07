@@ -27,6 +27,7 @@ import id.dekz.bakingapp.util.Constant;
 
 public class RecipeDetailStepFragment extends Fragment implements RecipeDetailStepView {
 
+    private static final String TAG = RecipeDetailStepFragment.class.getSimpleName();
     private Unbinder unbinder;
     private RecipeDetailStepPresenter presenter;
     private StepNavigationClickListener navigationClickListener;
@@ -119,8 +120,8 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         final int totalSteps = getArguments().getInt(Constant.KEY_TOTAL_STEPS);
         stepPosition.setText(step.getId()+"/"+totalSteps);
 
-        Log.d("currentPos", ""+step.getId());
-        Log.d("totalSteps", ""+totalSteps);
+        /*Log.d(TAG, "stepID: "+step.getId());
+        Log.d(TAG, "totalSteps: "+totalSteps);*/
 
         if(totalSteps==0){
             //twopane = true
@@ -138,7 +139,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("argumentnext", ""+getArguments().getInt(Constant.KEY_NEXT_STEP));
+                Log.d(TAG, "argumentnext: "+getArguments().getInt(Constant.KEY_NEXT_STEP));
                 navigationClickListener.onNavigateStep(
                         getArguments().getInt(Constant.KEY_NEXT_STEP),
                         totalSteps
@@ -149,7 +150,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("argumentprevious", ""+getArguments().getInt(Constant.KEY_PREVIOUS_STEP));
+                Log.d(TAG, "argumentprevious: "+getArguments().getInt(Constant.KEY_PREVIOUS_STEP));
                 navigationClickListener.onNavigateStep(
                         getArguments().getInt(Constant.KEY_PREVIOUS_STEP),
                         totalSteps

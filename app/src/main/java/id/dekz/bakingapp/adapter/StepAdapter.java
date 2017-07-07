@@ -32,8 +32,8 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepVH> {
         void onStepClicked(Step step,
                            int stepNumber,
                            int totalSteps,
-                           int previousStep,
-                           int nextStep);
+                           int previousStepID,
+                           int nextStepID);
     }
 
     public void addClickListener(OnStepClick onStepClick){
@@ -71,28 +71,27 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepVH> {
 
                 if(holder.getAdapterPosition() == 0){
                     previousPos = 0;
-                    nextPos = holder.getAdapterPosition()+1;
+                    //nextPos = holder.getAdapterPosition()+1;
                 }else{
                     previousPos = holder.getAdapterPosition()-1;
-                    nextPos = holder.getAdapterPosition()+1;
+                    //nextPos = holder.getAdapterPosition()+1;
                 }
 
-                if(holder.getAdapterPosition() == data.size()){
+                if(holder.getAdapterPosition() == data.size()-1){
                     nextPos = holder.getAdapterPosition();
-                    previousPos = holder.getAdapterPosition()-1;
+                    //previousPos = holder.getAdapterPosition()-1;
                 }else{
                     nextPos = holder.getAdapterPosition()+1;
-                    previousPos = holder.getAdapterPosition()-1;
+                    //previousPos = holder.getAdapterPosition()-1;
                 }
 
-                Log.d("stepadapter", "nextpos: "+nextPos);
                 rowIndex = position;
                 onStepClick.onStepClicked(
                         data.get(holder.getAdapterPosition()),
                         data.get(holder.getAdapterPosition()).getId(),
                         data.get(data.size()-1).getId(),
-                        previousPos,
-                        nextPos
+                        data.get(previousPos).getId(),
+                        data.get(nextPos).getId()
                 );
                 notifyDataSetChanged();
             }

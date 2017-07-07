@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import id.dekz.bakingapp.util.Constant;
 
 public class RecipeStepFragment extends Fragment implements RecipeStepView, StepAdapter.OnStepClick {
 
+    private static final String TAG = RecipeStepFragment.class.getSimpleName();
     private RecipeStepPresenter presenter;
     private Unbinder unbinder;
     private StepAdapter stepAdapter;
@@ -127,18 +129,21 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
     public void onStepClicked(Step step,
                               int stepNumber,
                               int totalSteps,
-                              int previousStep,
-                              int nextStep) {
+                              int previousStepID,
+                              int nextStepID) {
         if(getArguments().getBoolean(Constant.KEY_IS_TWO_PANE, false)){
             onStepSelected.onstepselected(presenter.getJsonStep(step));
         }else{
+            Log.d(TAG, "previousStepID: "+previousStepID);
+            Log.d(TAG, "currentStepID: "+stepNumber);
+            Log.d(TAG, "nextStepID: "+nextStepID);
             presenter.addFragment(
                     presenter.getDetailStepFragment(
                             presenter.getJsonStep(step),
                             stepNumber,
                             totalSteps,
-                            previousStep,
-                            nextStep
+                            previousStepID,
+                            nextStepID
                     )
             );
         }

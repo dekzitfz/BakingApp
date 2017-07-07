@@ -25,6 +25,7 @@ import id.dekz.bakingapp.model.Step;
 
 public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
 
+    private static final String TAG = RecipeDetailPresenter.class.getSimpleName();
     private RecipeDetailView view;
     private Gson gson;
 
@@ -95,7 +96,13 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
 
     String getStepJsonByIndex(String jsonRecipe, int indexID){
         Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
-        return gson.toJson(recipe.getSteps().get(indexID));
+        int pos = 0;
+        for(int i=0; i<recipe.getSteps().size(); i++){
+            if(recipe.getSteps().get(i).getId() == indexID){
+                pos = i;
+            }
+        }
+        return gson.toJson(recipe.getSteps().get(pos));
     }
 
     int getPreviousStepIDByTargetID(String jsonRecipe, int targetID){
@@ -107,9 +114,12 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
             }
         }
 
+        //Log.d(TAG, "getPreviousStepIDByTargetID pos: "+pos);
         if(pos > 0){
+            //pos in range 1 - end
             return recipe.getSteps().get(pos-1).getId();
         }else if(pos == 0){
+            //pos is minimum
             return recipe.getSteps().get(pos).getId();
         }else{
             return 0;
@@ -118,7 +128,7 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
     }
 
     int getNextStepIDByTargetID(String jsonRecipe, int targetID){
-        Log.d("targetID", ""+targetID);
+        //Log.d("targetID", ""+targetID);
         Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
         int pos = 0;
         for(int i=0; i<recipe.getSteps().size(); i++){
@@ -127,8 +137,9 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
             }
         }
 
-        Log.d("pos", ""+pos);
+        //Log.d(TAG, "getNextStepIDByTargetID pos: "+pos);
         if(pos == recipe.getSteps().size()-1) {
+            //size 5, index 4, pos = 4, return id of that pos
             return recipe.getSteps().get(pos).getId();
         }else{
             return recipe.getSteps().get(pos+1).getId();

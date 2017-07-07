@@ -10,6 +10,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class RecipeDetailActivity extends AppCompatActivity
         RecipeStepFragment.OnStepSelected,
         RecipeDetailStepFragment.StepNavigationClickListener {
 
+    private static final String TAG = RecipeDetailActivity.class.getSimpleName();
     private RecipeDetailPresenter presenter;
     private String jsonStr;
     private boolean isTwoPane = false;
@@ -126,6 +128,10 @@ public class RecipeDetailActivity extends AppCompatActivity
     //only called from handset with arrow nav
     @Override
     public void onNavigateStep(int targetPosition, int totalPosition) {
+        Log.d(TAG, "previousID: "+presenter.getPreviousStepIDByTargetID(jsonStr, targetPosition));
+        Log.d(TAG, "currentID: "+targetPosition);
+        Log.d(TAG, "nextID: "+presenter.getNextStepIDByTargetID(jsonStr, targetPosition));
+
         presenter.replaceFragment(
                 presenter.getStepDetailFragment(
                         presenter.getStepJsonByIndex(jsonStr, targetPosition),
