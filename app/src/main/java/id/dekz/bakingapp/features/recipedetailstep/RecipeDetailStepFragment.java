@@ -114,6 +114,12 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         final int totalSteps = getArguments().getInt(Constant.KEY_TOTAL_STEPS);
         stepPosition.setText(currentPos+"/"+totalSteps);
 
+        if(currentPos == 0){
+            previousButton.setVisibility(View.INVISIBLE);
+        }else if(currentPos == totalSteps){
+            nextButton.setVisibility(View.INVISIBLE);
+        }
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
