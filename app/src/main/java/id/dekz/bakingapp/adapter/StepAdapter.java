@@ -2,6 +2,8 @@ package id.dekz.bakingapp.adapter;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +25,22 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepVH> {
 
     private List<Step> data = new ArrayList<>();
     private OnStepClick onStepClick;
+    private int rowIndex = -1;
+    private int previousPos, nextPos;
 
     public interface OnStepClick{
-        void onStepClicked(Step step, int stepNumber, int totalSteps);
+        void onStepClicked(Step step,
+                           int stepNumber,
+                           int totalSteps,
+                           int previousStep,
+                           int nextStep);
     }
 
     public void addClickListener(OnStepClick onStepClick){
         this.onStepClick = onStepClick;
     }
 
-    public StepAdapter(/*OnStepClick onStepClick*/) {
-        //this.onStepClick = onStepClick;
+    public StepAdapter (){
     }
 
     public void replaceAll(List<Step> data){
@@ -51,21 +58,51 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.StepVH> {
     }
 
     @Override
-    public void onBindViewHolder(final StepVH holder, int position) {
+    public void onBindViewHolder(final StepVH holder, final int position) {
         String idStep = String.valueOf(data.get(position).getId());
         String descStep = data.get(position).getShortDescription();
         holder.tvStep.setText(idStep+". "+descStep);
 
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(holder.getAdapterPosition() == 0){
+                    previousPos = 0;
+                    nextPos = holder.getAdapterPosition()+1;
+                }else{
+                    previousPos = holder.getAdapterPosition()-1;
+                    nextPos = holder.getAdapterPosition()+1;
+                }
+
+                if(holder.getAdapterPosition() == data.size()){
+                    nextPos = holder.getAdapterPosition();
+                    previousPos = holder.getAdapterPosition()-1;
+                }else{
+                    nextPos = holder.getAdapterPosition()+1;
+                    previousPos = holder.getAdapterPosition()-1;
+                }
+
+                Log.d("stepadapter", "nextpos: "+nextPos);
+                rowIndex = position;
                 onStepClick.onStepClicked(
                         data.get(holder.getAdapterPosition()),
                         data.get(holder.getAdapterPosition()).getId(),
-                        data.get(data.size()-1).getId()
+                        data.get(data.size()-1).getId(),
+                        previousPos,
+                        nextPos
                 );
+                notifyDataSetChanged();
             }
         });
+
+        if(rowIndex==position){
+            holder.tvStep.setSelected(true);
+        }else{
+            holder.tvStep.setSelected(false);
+        }
     }
 
     @Override

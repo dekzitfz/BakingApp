@@ -77,7 +77,7 @@ public class RecipeDetailActivity extends AppCompatActivity
             if(isTwoPane){
                 presenter.addFragments(
                         presenter.getStepFragment(jsonStr, isTwoPane),
-                        presenter.getStepDetailFragment(null ,0 ,0)
+                        presenter.getStepDetailFragment(null, 0, 0, 0, 0)
                 );
             }else{
                 presenter.addFragment(presenter.getStepFragment(jsonStr, isTwoPane));
@@ -120,16 +120,19 @@ public class RecipeDetailActivity extends AppCompatActivity
     //only for twopane
     @Override
     public void onstepselected(String stepJson) {
-        presenter.changeFragmentRight(presenter.getStepDetailFragment(stepJson, 0, 0));
+        presenter.changeFragmentRight(presenter.getStepDetailFragment(stepJson, 0, 0, 0, 0));
     }
 
+    //only called from handset with arrow nav
     @Override
     public void onNavigateStep(int targetPosition, int totalPosition) {
         presenter.replaceFragment(
                 presenter.getStepDetailFragment(
                         presenter.getStepJsonByIndex(jsonStr, targetPosition),
                         targetPosition,
-                        totalPosition
+                        totalPosition,
+                        presenter.getPreviousStepIDByTargetID(jsonStr, targetPosition),
+                        presenter.getNextStepIDByTargetID(jsonStr, targetPosition)
                 )
         );
     }

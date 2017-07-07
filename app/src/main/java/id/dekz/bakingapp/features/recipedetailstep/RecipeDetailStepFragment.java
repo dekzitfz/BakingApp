@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,12 +56,16 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
     public static RecipeDetailStepFragment newInstance(String json,
                                                        @Nullable int currentStep,
-                                                       @Nullable int totalStep){
+                                                       @Nullable int totalStep,
+                                                       @Nullable int previousStep,
+                                                       @Nullable int nextStep){
         RecipeDetailStepFragment fragment = new RecipeDetailStepFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constant.KEY_STEP, json);
         bundle.putInt(Constant.KEY_CURRENT_STEP, currentStep);
         bundle.putInt(Constant.KEY_TOTAL_STEPS, totalStep);
+        bundle.putInt(Constant.KEY_PREVIOUS_STEP, previousStep);
+        bundle.putInt(Constant.KEY_NEXT_STEP, nextStep);
         fragment.setArguments(bundle);
 
         return fragment;
@@ -110,33 +115,45 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @Override
     public void bindData(Step step) {
         description.setText(step.getDescription());
-        final int currentPos = getArguments().getInt(Constant.KEY_CURRENT_STEP);
+        //final int currentPos = step.getId();
         final int totalSteps = getArguments().getInt(Constant.KEY_TOTAL_STEPS);
-        stepPosition.setText(currentPos+"/"+totalSteps);
+        stepPosition.setText(step.getId()+"/"+totalSteps);
 
-        if(currentPos==0 & totalSteps==0){
+        Log.d("currentPos", ""+step.getId());
+        Log.d("totalSteps", ""+totalSteps);
+
+        if(totalSteps==0){
+            //twopane = true
             nextButton.setVisibility(View.GONE);
             previousButton.setVisibility(View.GONE);
             stepPosition.setVisibility(View.GONE);
         }
 
-        if(currentPos == 0){
+        if(step.getId() == 0){
             previousButton.setVisibility(View.INVISIBLE);
-        }else if(currentPos == totalSteps){
+        }else if(step.getId() == totalSteps){
             nextButton.setVisibility(View.INVISIBLE);
         }
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigationClickListener.onNavigateStep(currentPos+1, totalSteps);
+                Log.d("argumentnext", ""+getArguments().getInt(Constant.KEY_NEXT_STEP));
+                navigationClickListener.onNavigateStep(
+                        getArguments().getInt(Constant.KEY_NEXT_STEP),
+                        totalSteps
+                );
             }
         });
 
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigationClickListener.onNavigateStep(currentPos-1, totalSteps);
+                Log.d("argumentprevious", ""+getArguments().getInt(Constant.KEY_PREVIOUS_STEP));
+                navigationClickListener.onNavigateStep(
+                        getArguments().getInt(Constant.KEY_PREVIOUS_STEP),
+                        totalSteps
+                );
             }
         });
     }

@@ -3,6 +3,7 @@ package id.dekz.bakingapp.features.recipedetail;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.google.gson.Gson;
@@ -64,8 +65,12 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
                 .commit();
     }
 
-    Fragment getStepDetailFragment(@Nullable String json, int currentStep, int totalStep){
-        return RecipeDetailStepFragment.newInstance(json, currentStep, totalStep);
+    Fragment getStepDetailFragment(@Nullable String json,
+                                   int currentStep,
+                                   int totalStep,
+                                   int previousStep,
+                                   int nextStep){
+        return RecipeDetailStepFragment.newInstance(json, currentStep, totalStep, previousStep, nextStep);
     }
 
     Fragment getStepFragment(String json, boolean isTwoPane){
@@ -91,5 +96,43 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
     String getStepJsonByIndex(String jsonRecipe, int indexID){
         Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
         return gson.toJson(recipe.getSteps().get(indexID));
+    }
+
+    int getPreviousStepIDByTargetID(String jsonRecipe, int targetID){
+        Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
+        int pos = 0;
+        for(int i=0; i<recipe.getSteps().size(); i++){
+            if(recipe.getSteps().get(i).getId() == targetID){
+                pos = i;
+            }
+        }
+
+        if(pos > 0){
+            return recipe.getSteps().get(pos-1).getId();
+        }else if(pos == 0){
+            return recipe.getSteps().get(pos).getId();
+        }else{
+            return 0;
+        }
+        //return recipe.getSteps().get(pos-1).getId();
+    }
+
+    int getNextStepIDByTargetID(String jsonRecipe, int targetID){
+        Log.d("targetID", ""+targetID);
+        Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
+        int pos = 0;
+        for(int i=0; i<recipe.getSteps().size(); i++){
+            if(recipe.getSteps().get(i).getId() == targetID){
+                pos = i;
+            }
+        }
+
+        Log.d("pos", ""+pos);
+        if(pos == recipe.getSteps().size()-1) {
+            return recipe.getSteps().get(pos).getId();
+        }else{
+            return recipe.getSteps().get(pos+1).getId();
+        }
+        //return recipe.getSteps().get(pos+1).getId();
     }
 }
