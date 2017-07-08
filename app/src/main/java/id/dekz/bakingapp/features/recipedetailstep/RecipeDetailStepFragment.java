@@ -1,6 +1,7 @@
 package id.dekz.bakingapp.features.recipedetailstep;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -12,7 +13,17 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,8 +42,9 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     private Unbinder unbinder;
     private RecipeDetailStepPresenter presenter;
     private StepNavigationClickListener navigationClickListener;
+    //private SimpleExoPlayer exoPlayer;
 
-    @BindView(R.id.player)SimpleExoPlayerView player;
+    @BindView(R.id.player)SimpleExoPlayerView playerView;
     @BindView(R.id.tv_step_description)TextView description;
     @BindView(R.id.tv_unselected_step)TextView unselectedStepView;
     @BindView(R.id.view_detail_step)LinearLayout selectedStepView;
@@ -116,12 +128,10 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @Override
     public void bindData(Step step) {
         description.setText(step.getDescription());
-        //final int currentPos = step.getId();
         final int totalSteps = getArguments().getInt(Constant.KEY_TOTAL_STEPS);
         stepPosition.setText(step.getId()+"/"+totalSteps);
 
-        /*Log.d(TAG, "stepID: "+step.getId());
-        Log.d(TAG, "totalSteps: "+totalSteps);*/
+        presenter.setupPlayer(Uri.parse(step.getVideoURL()));
 
         if(totalSteps==0){
             //twopane = true
@@ -157,5 +167,17 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
                 );
             }
         });
+    }
+
+    @Override
+    public Context getContextFromFragment() {
+        return getActivity();
+    }
+
+    @Override
+    public void onPlayerSet(SimpleExoPlayer player, MediaSource mediaSource) {
+        playerView.setPlayer(player);
+        player.prepare(mediaSource);
+        player.setPlayWhenReady(true);
     }
 }

@@ -1,5 +1,10 @@
 package id.dekz.bakingapp.features.recipedetailstep;
 
+import android.content.Context;
+
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
+
 import id.dekz.bakingapp.basemvp.BaseView;
 import id.dekz.bakingapp.model.Step;
 
@@ -9,4 +14,6 @@ import id.dekz.bakingapp.model.Step;
 
 public interface RecipeDetailStepView extends BaseView {
     void bindData(Step step);
+    Context getContextFromFragment();
+    void onPlayerSet(SimpleExoPlayer player, MediaSource mediaSource);
 }
