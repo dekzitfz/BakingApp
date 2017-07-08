@@ -1,6 +1,7 @@
 package id.dekz.bakingapp.features.recipedetailstep;
 
 import android.content.Context;
+import android.widget.ImageView;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -16,4 +17,7 @@ public interface RecipeDetailStepView extends BaseView {
     void bindData(Step step);
     Context getContextFromFragment();
     void onPlayerSet(SimpleExoPlayer player, MediaSource mediaSource);
+    void onImageSet();
+    void onNomediaAvailable();
+    ImageView getImageView();
 }

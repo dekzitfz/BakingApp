@@ -3,6 +3,7 @@ package id.dekz.bakingapp.features.recipedetailstep;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,12 +27,15 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.model.Step;
 import id.dekz.bakingapp.util.Constant;
+import id.dekz.bakingapp.util.URLUtils;
 
 /**
  * Created by DEKZ on 7/4/2017.
@@ -42,7 +47,6 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     private Unbinder unbinder;
     private RecipeDetailStepPresenter presenter;
     private StepNavigationClickListener navigationClickListener;
-    //private SimpleExoPlayer exoPlayer;
 
     @BindView(R.id.player)SimpleExoPlayerView playerView;
     @BindView(R.id.tv_step_description)TextView description;
@@ -51,6 +55,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @BindView(R.id.fab_next)FloatingActionButton nextButton;
     @BindView(R.id.fab_previous)FloatingActionButton previousButton;
     @BindView(R.id.tv_step_position)TextView stepPosition;
+    @BindView(R.id.img_step)ImageView imageStep;
 
     public interface StepNavigationClickListener{
         void onNavigateStep(int targetPosition, int totalPosition);
@@ -131,7 +136,8 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         final int totalSteps = getArguments().getInt(Constant.KEY_TOTAL_STEPS);
         stepPosition.setText(step.getId()+"/"+totalSteps);
 
-        presenter.setupPlayer(Uri.parse(step.getVideoURL()));
+        //presenter.setupPlayer(Uri.parse(step.getVideoURL()));
+        presenter.checkMedia(step.getVideoURL(), step.getThumbnailURL());
 
         if(totalSteps==0){
             //twopane = true
@@ -175,9 +181,34 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     }
 
     @Override
-    public void onPlayerSet(SimpleExoPlayer player, MediaSource mediaSource) {
-        playerView.setPlayer(player);
-        player.prepare(mediaSource);
-        player.setPlayWhenReady(true);
+    public void onPlayerSet(final SimpleExoPlayer player, final MediaSource mediaSource) {
+        playerView.setVisibility(View.VISIBLE);
+        imageStep.setVisibility(View.GONE);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerView.setPlayer(player);
+                player.prepare(mediaSource);
+                player.setPlayWhenReady(true);
+            }
+        });
+    }
+
+    @Override
+    public void onImageSet() {
+        playerView.setVisibility(View.GONE);
+        imageStep.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public ImageView getImageView() {
+        return imageStep;
+    }
+
+    @Override
+    public void onNomediaAvailable() {
+        playerView.setVisibility(View.GONE);
+        imageStep.setVisibility(View.GONE);
     }
 }
