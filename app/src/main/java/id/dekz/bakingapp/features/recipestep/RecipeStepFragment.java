@@ -35,10 +35,12 @@ import id.dekz.bakingapp.util.Constant;
 public class RecipeStepFragment extends Fragment implements RecipeStepView, StepAdapter.OnStepClick {
 
     private static final String TAG = RecipeStepFragment.class.getSimpleName();
+    private static final String JSON_STRING = "json_string";
     private RecipeStepPresenter presenter;
     private Unbinder unbinder;
     private StepAdapter stepAdapter;
     private OnStepSelected onStepSelected;
+    private String json;
 
     @BindView(R.id.tv_ingredients)TextView ingredients;
     @BindView(R.id.rv_steps)RecyclerView rvStep;
@@ -77,8 +79,30 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
         View rootView = inflater.inflate(R.layout.fragment_step, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
+        if(savedInstanceState!=null){
+            json = savedInstanceState.getString(JSON_STRING);
+        }else{
+            json = getArguments().getString(Constant.KEY_RECIPE, null);
+        }
+
         onAttachView();
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(JSON_STRING, json);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState!=null){
+            json = savedInstanceState.getString(JSON_STRING);
+        }else{
+            json = getArguments().getString(Constant.KEY_RECIPE, null);
+        }
     }
 
     @Override
@@ -86,10 +110,11 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
         presenter = new RecipeStepPresenter();
         presenter.onAttach(this);
 
-        String json = getArguments().getString(Constant.KEY_RECIPE, null);
         if(json != null){
             setupRV();
             presenter.getRecipeModel(json);
+        }else{
+            Log.w(TAG, "JSON is NULL!");
         }
     }
 
@@ -134,9 +159,6 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
         if(getArguments().getBoolean(Constant.KEY_IS_TWO_PANE, false)){
             onStepSelected.onstepselected(presenter.getJsonStep(step));
         }else{
-            Log.d(TAG, "previousStepID: "+previousStepID);
-            Log.d(TAG, "currentStepID: "+stepNumber);
-            Log.d(TAG, "nextStepID: "+nextStepID);
             presenter.addFragment(
                     presenter.getDetailStepFragment(
                             presenter.getJsonStep(step),

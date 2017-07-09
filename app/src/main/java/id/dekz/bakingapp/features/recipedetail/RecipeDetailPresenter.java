@@ -47,9 +47,30 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
                 .commit();
     }
 
-    void addFragment(Fragment fragment){
+    void addFragmentAndAddToBackStack(Fragment fragment){
+        String fragmentTag = "";
+        if(fragment instanceof RecipeStepFragment){
+            fragmentTag = RecipeStepFragment.class.getSimpleName();
+        }else if(fragment instanceof RecipeDetailStepFragment){
+            fragmentTag = RecipeDetailStepFragment.class.getSimpleName();
+        }
+
         view.getFragmentManagerFromActivity().beginTransaction()
-                .add(view.getContainerID(), fragment)
+                .replace(view.getContainerID(), fragment, fragmentTag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    void addFragment(Fragment fragment){
+        String fragmentTag = "";
+        if(fragment instanceof RecipeStepFragment){
+            fragmentTag = RecipeStepFragment.class.getSimpleName();
+        }else if(fragment instanceof RecipeDetailStepFragment){
+            fragmentTag = RecipeDetailStepFragment.class.getSimpleName();
+        }
+
+        view.getFragmentManagerFromActivity().beginTransaction()
+                .add(view.getContainerID(), fragment, fragmentTag)
                 .commit();
     }
 

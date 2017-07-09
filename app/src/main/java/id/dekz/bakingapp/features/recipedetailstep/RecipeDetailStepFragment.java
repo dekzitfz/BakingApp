@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.io.IOException;
 
+import butterknife.BindBool;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -44,9 +45,14 @@ import id.dekz.bakingapp.util.URLUtils;
 public class RecipeDetailStepFragment extends Fragment implements RecipeDetailStepView {
 
     private static final String TAG = RecipeDetailStepFragment.class.getSimpleName();
+    private static final String JSON_STRING = "json_string";
+    private static final String PLAYER_POSITION = "player_position";
     private Unbinder unbinder;
     private RecipeDetailStepPresenter presenter;
     private StepNavigationClickListener navigationClickListener;
+    private SimpleExoPlayer mPlayer;
+    private long playerPosition = 0;
+    private String json;
 
     @BindView(R.id.player)SimpleExoPlayerView playerView;
     @BindView(R.id.tv_step_description)TextView description;
@@ -56,6 +62,9 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @BindView(R.id.fab_previous)FloatingActionButton previousButton;
     @BindView(R.id.tv_step_position)TextView stepPosition;
     @BindView(R.id.img_step)ImageView imageStep;
+
+    @BindBool(R.bool.isLandscape)boolean isLandsacpe;
+    @BindBool(R.bool.isTablet)boolean isTablet;
 
     public interface StepNavigationClickListener{
         void onNavigateStep(int targetPosition, int totalPosition);
@@ -73,10 +82,10 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     }
 
     public static RecipeDetailStepFragment newInstance(String json,
-                                                       @Nullable int currentStep,
-                                                       @Nullable int totalStep,
-                                                       @Nullable int previousStep,
-                                                       @Nullable int nextStep){
+                                                       int currentStep,
+                                                       int totalStep,
+                                                       int previousStep,
+                                                       int nextStep){
         RecipeDetailStepFragment fragment = new RecipeDetailStepFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constant.KEY_STEP, json);
@@ -95,11 +104,41 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_detail_step, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
+        if(savedInstanceState!=null){
+            json = savedInstanceState.getString(JSON_STRING);
+            playerPosition = savedInstanceState.getLong(PLAYER_POSITION);
+        }else{
+            json = getArguments().getString(Constant.KEY_STEP);
+        }
+
         onAttachView();
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState");
+        outState.putString(JSON_STRING, json);
+        if(mPlayer != null){
+            outState.putLong(PLAYER_POSITION, mPlayer.getCurrentPosition());
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated");
+        if(savedInstanceState!=null){
+            json = savedInstanceState.getString(JSON_STRING);
+            playerPosition = savedInstanceState.getLong(PLAYER_POSITION);
+        }else{
+            json = getArguments().getString(Constant.KEY_STEP);
+        }
     }
 
     @Override
@@ -114,12 +153,12 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         presenter = new RecipeDetailStepPresenter();
         presenter.onAttach(this);
 
-        String json = getArguments().getString(Constant.KEY_STEP);
         if(json != null){
             selectedStepView.setVisibility(View.VISIBLE);
             unselectedStepView.setVisibility(View.GONE);
             presenter.getStepModel(json);
         }else{
+            //first open from tablet
             selectedStepView.setVisibility(View.GONE);
             unselectedStepView.setVisibility(View.VISIBLE);
         }
@@ -132,11 +171,11 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
     @Override
     public void bindData(Step step) {
-        description.setText(step.getDescription());
         final int totalSteps = getArguments().getInt(Constant.KEY_TOTAL_STEPS);
+
+        description.setText(step.getDescription());
         stepPosition.setText(step.getId()+"/"+totalSteps);
 
-        //presenter.setupPlayer(Uri.parse(step.getVideoURL()));
         presenter.checkMedia(step.getVideoURL(), step.getThumbnailURL());
 
         if(totalSteps==0){
@@ -155,7 +194,6 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "argumentnext: "+getArguments().getInt(Constant.KEY_NEXT_STEP));
                 navigationClickListener.onNavigateStep(
                         getArguments().getInt(Constant.KEY_NEXT_STEP),
                         totalSteps
@@ -166,7 +204,6 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "argumentprevious: "+getArguments().getInt(Constant.KEY_PREVIOUS_STEP));
                 navigationClickListener.onNavigateStep(
                         getArguments().getInt(Constant.KEY_PREVIOUS_STEP),
                         totalSteps
@@ -182,15 +219,32 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
     @Override
     public void onPlayerSet(final SimpleExoPlayer player, final MediaSource mediaSource) {
+
         playerView.setVisibility(View.VISIBLE);
         imageStep.setVisibility(View.GONE);
+
+        mPlayer = player;
+
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                playerView.setPlayer(player);
-                player.prepare(mediaSource);
-                player.setPlayWhenReady(true);
+                if(isLandsacpe && !isTablet){
+                    //handset landscape mode
+                    //fullscreen
+
+                    playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                }
+
+                playerView.setPlayer(mPlayer);
+                mPlayer.prepare(mediaSource);
+                mPlayer.seekTo(playerPosition);
+                mPlayer.setPlayWhenReady(true);
             }
         });
     }

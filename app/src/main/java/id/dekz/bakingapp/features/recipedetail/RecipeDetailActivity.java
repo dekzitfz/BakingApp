@@ -14,6 +14,8 @@ import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
@@ -34,9 +36,12 @@ public class RecipeDetailActivity extends AppCompatActivity
         RecipeDetailStepFragment.StepNavigationClickListener {
 
     private static final String TAG = RecipeDetailActivity.class.getSimpleName();
+    private static final String JSON_STRING = "json_string";
     private RecipeDetailPresenter presenter;
     private String jsonStr;
     private boolean isTwoPane = false;
+    private RecipeStepFragment stepFragment;
+    private RecipeDetailStepFragment detailStepFragment;
 
     @BindView(R.id.toolbar)Toolbar toolbar;
 
@@ -54,9 +59,35 @@ public class RecipeDetailActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        if(savedInstanceState != null){
+            jsonStr = savedInstanceState.getString(JSON_STRING);
+            stepFragment = (RecipeStepFragment) getSupportFragmentManager().getFragment(
+                    savedInstanceState,
+                    RecipeStepFragment.class.getSimpleName());
+
+            detailStepFragment = (RecipeDetailStepFragment) getSupportFragmentManager().getFragment(
+                    savedInstanceState,
+                    RecipeDetailStepFragment.class.getSimpleName());
+        }else{
+            jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        }
+
 
         onAttachView();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(JSON_STRING, jsonStr);
+        List<Fragment> allFragments = getSupportFragmentManager().getFragments();
+        for (Fragment f : allFragments){
+            getSupportFragmentManager().putFragment(
+                    outState,
+                    f.getTag(),
+                    f
+            );
+        }
     }
 
     @Override
@@ -70,19 +101,44 @@ public class RecipeDetailActivity extends AppCompatActivity
         presenter = new RecipeDetailPresenter();
         presenter.onAttach(this);
 
-        if(container == null){
-            isTwoPane = true;
-        }
+        if(container == null){isTwoPane = true;}
 
-        if(jsonStr != null){
-            presenter.getRecipeModel(jsonStr);
+        if(stepFragment!=null && detailStepFragment!=null){
+            //both fragment restored
+            Log.d(TAG, "restoring both fragments");
             if(isTwoPane){
                 presenter.addFragments(
-                        presenter.getStepFragment(jsonStr, isTwoPane),
+                        stepFragment,
+                        detailStepFragment
+                );
+            }else{
+                presenter.addFragment(stepFragment);
+                presenter.addFragmentAndAddToBackStack(detailStepFragment);
+            }
+        }else if(stepFragment!=null){
+            Log.d(TAG,"restoring step fragment");
+            if(isTwoPane){
+                presenter.addFragments(
+                        stepFragment,
                         presenter.getStepDetailFragment(null, 0, 0, 0, 0)
                 );
             }else{
-                presenter.addFragment(presenter.getStepFragment(jsonStr, isTwoPane));
+                if(getSupportFragmentManager().findFragmentByTag(RecipeStepFragment.class.getSimpleName()) == null){
+                    presenter.addFragment(stepFragment);
+                }
+            }
+        }else{
+            //no state fragment available
+            if(jsonStr != null){
+                presenter.getRecipeModel(jsonStr);
+                if(isTwoPane){
+                    presenter.addFragments(
+                            presenter.getStepFragment(jsonStr, isTwoPane),
+                            presenter.getStepDetailFragment(null, 0, 0, 0, 0)
+                    );
+                }else{
+                    presenter.addFragment(presenter.getStepFragment(jsonStr, isTwoPane));
+                }
             }
         }
     }
@@ -128,10 +184,6 @@ public class RecipeDetailActivity extends AppCompatActivity
     //only called from handset with arrow nav
     @Override
     public void onNavigateStep(int targetPosition, int totalPosition) {
-        Log.d(TAG, "previousID: "+presenter.getPreviousStepIDByTargetID(jsonStr, targetPosition));
-        Log.d(TAG, "currentID: "+targetPosition);
-        Log.d(TAG, "nextID: "+presenter.getNextStepIDByTargetID(jsonStr, targetPosition));
-
         presenter.replaceFragment(
                 presenter.getStepDetailFragment(
                         presenter.getStepJsonByIndex(jsonStr, targetPosition),
