@@ -49,11 +49,13 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     private static final String TAG = RecipeDetailStepFragment.class.getSimpleName();
     private static final String JSON_STRING = "json_string";
     private static final String PLAYER_POSITION = "player_position";
+    private static final String CURRENT_WINDOW = "current_window";
     private Unbinder unbinder;
     private RecipeDetailStepPresenter presenter;
     private StepNavigationClickListener navigationClickListener;
     private SimpleExoPlayer mPlayer;
-    private long playerPosition = 0;
+    private long playbackPosition;
+    private int currentWindow;
     private String json;
 
     @BindView(R.id.player)SimpleExoPlayerView playerView;
@@ -112,7 +114,8 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
         if(savedInstanceState!=null){
             json = savedInstanceState.getString(JSON_STRING);
-            playerPosition = savedInstanceState.getLong(PLAYER_POSITION);
+            playbackPosition = savedInstanceState.getLong(PLAYER_POSITION);
+            currentWindow = savedInstanceState.getInt(CURRENT_WINDOW);
         }else{
             json = getArguments().getString(Constant.KEY_STEP);
         }
@@ -128,6 +131,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         outState.putString(JSON_STRING, json);
         if(mPlayer != null){
             outState.putLong(PLAYER_POSITION, mPlayer.getCurrentPosition());
+            outState.putInt(CURRENT_WINDOW, mPlayer.getCurrentWindowIndex());
         }
     }
 
@@ -137,20 +141,32 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         Log.d(TAG, "onActivityCreated");
         if(savedInstanceState!=null){
             json = savedInstanceState.getString(JSON_STRING);
-            playerPosition = savedInstanceState.getLong(PLAYER_POSITION);
+            playbackPosition = savedInstanceState.getLong(PLAYER_POSITION);
         }else{
             json = getArguments().getString(Constant.KEY_STEP);
         }
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(mPlayer != null){
-            mPlayer.stop();
-            mPlayer.release();
-            mPlayer = null;
-        }
+        releasePlayer();
         unbinder.unbind();
         onDetachView();
     }
@@ -254,7 +270,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
                 playerView.setPlayer(mPlayer);
                 mPlayer.prepare(mediaSource);
-                mPlayer.seekTo(playerPosition);
+                mPlayer.seekTo(currentWindow, playbackPosition);
                 mPlayer.setPlayWhenReady(true);
             }
         });
@@ -275,5 +291,15 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     public void onNomediaAvailable() {
         playerView.setVisibility(View.GONE);
         imageStep.setVisibility(View.GONE);
+    }
+
+    private void releasePlayer() {
+        if (mPlayer != null) {
+            playbackPosition = mPlayer.getCurrentPosition();
+            currentWindow = mPlayer.getCurrentWindowIndex();
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+        }
     }
 }
