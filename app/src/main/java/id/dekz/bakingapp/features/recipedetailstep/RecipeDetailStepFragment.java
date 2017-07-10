@@ -1,5 +1,6 @@
 package id.dekz.bakingapp.features.recipedetailstep;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import id.dekz.bakingapp.R;
+import id.dekz.bakingapp.features.recipedetail.RecipeDetailActivity;
 import id.dekz.bakingapp.model.Step;
 import id.dekz.bakingapp.util.Constant;
 import id.dekz.bakingapp.util.URLUtils;
@@ -232,9 +234,10 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
 
         getActivity().runOnUiThread(new Runnable() {
+            @SuppressLint("InlinedApi")
             @Override
             public void run() {
-                if(isLandsacpe && !isTablet){
+                if(isLandsacpe && !isTablet && mPlayer!= null){
                     //handset landscape mode
                     //fullscreen
 
@@ -244,6 +247,9 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+                    //noinspection ConstantConditions
+                    ((RecipeDetailActivity)getActivity()).getSupportActionBar().hide();
                 }
 
                 playerView.setPlayer(mPlayer);
