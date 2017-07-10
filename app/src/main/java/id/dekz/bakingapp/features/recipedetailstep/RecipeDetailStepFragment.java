@@ -144,6 +144,11 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if(mPlayer != null){
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+        }
         unbinder.unbind();
         onDetachView();
     }
@@ -218,7 +223,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     }
 
     @Override
-    public void onPlayerSet(final SimpleExoPlayer player, final MediaSource mediaSource) {
+    public void onPlayerSet(SimpleExoPlayer player, final MediaSource mediaSource) {
 
         playerView.setVisibility(View.VISIBLE);
         imageStep.setVisibility(View.GONE);

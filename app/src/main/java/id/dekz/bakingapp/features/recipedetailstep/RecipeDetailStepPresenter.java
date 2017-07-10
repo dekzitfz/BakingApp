@@ -44,7 +44,6 @@ public class RecipeDetailStepPresenter implements BasePresenter<RecipeDetailStep
     @Override
     public void onDetach() {
         if(player!=null){
-            player.stop();
             player.release();
             player = null;
         }
