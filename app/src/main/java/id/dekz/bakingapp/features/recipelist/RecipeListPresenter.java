@@ -88,7 +88,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
 
             @Override
             public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
-                //t.printStackTrace();
+                t.printStackTrace();
                 initLoader();
             }
         });

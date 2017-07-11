@@ -6,25 +6,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
-import id.dekz.bakingapp.adapter.StepAdapter;
 import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.features.recipestep.RecipeStepFragment;
 import id.dekz.bakingapp.model.Recipe;
-
-import static android.support.v7.recyclerview.R.attr.layoutManager;
 
 /**
  * Created by DEKZ on 7/2/2017.
@@ -53,6 +46,7 @@ public class RecipeDetailActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
         ButterKnife.bind(this);
@@ -61,13 +55,13 @@ public class RecipeDetailActivity extends AppCompatActivity
 
         if(savedInstanceState != null){
             jsonStr = savedInstanceState.getString(JSON_STRING);
-            stepFragment = (RecipeStepFragment) getSupportFragmentManager().getFragment(
+            /*stepFragment = (RecipeStepFragment) getSupportFragmentManager().getFragment(
                     savedInstanceState,
                     RecipeStepFragment.class.getSimpleName());
 
             detailStepFragment = (RecipeDetailStepFragment) getSupportFragmentManager().getFragment(
                     savedInstanceState,
-                    RecipeDetailStepFragment.class.getSimpleName());
+                    RecipeDetailStepFragment.class.getSimpleName());*/
         }else{
             jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         }
@@ -78,67 +72,36 @@ public class RecipeDetailActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState");
         super.onSaveInstanceState(outState);
         outState.putString(JSON_STRING, jsonStr);
-        List<Fragment> allFragments = getSupportFragmentManager().getFragments();
-        for (Fragment f : allFragments){
-            getSupportFragmentManager().putFragment(
-                    outState,
-                    f.getTag(),
-                    f
-            );
-        }
     }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         onDetachView();
     }
 
     @Override
     public void onAttachView() {
+        Log.d(TAG, "onAttachView");
         presenter = new RecipeDetailPresenter();
         presenter.onAttach(this);
 
         if(container == null){isTwoPane = true;}
 
-        if(stepFragment!=null && detailStepFragment!=null){
-            //both fragment restored
-            Log.d(TAG, "restoring both fragments");
+        if(jsonStr != null){
+            presenter.getRecipeModel(jsonStr);
             if(isTwoPane){
                 presenter.addFragments(
-                        stepFragment,
-                        detailStepFragment
-                );
-            }else{
-                presenter.addFragment(stepFragment);
-                presenter.addFragmentAndAddToBackStack(detailStepFragment);
-            }
-        }else if(stepFragment!=null){
-            Log.d(TAG,"restoring step fragment");
-            if(isTwoPane){
-                presenter.addFragments(
-                        stepFragment,
+                        presenter.getStepFragment(jsonStr, isTwoPane),
                         presenter.getStepDetailFragment(null, 0, 0, 0, 0)
                 );
             }else{
-                if(getSupportFragmentManager().findFragmentByTag(RecipeStepFragment.class.getSimpleName()) == null){
-                    presenter.addFragment(stepFragment);
-                }
-            }
-        }else{
-            //no state fragment available
-            if(jsonStr != null){
-                presenter.getRecipeModel(jsonStr);
-                if(isTwoPane){
-                    presenter.addFragments(
-                            presenter.getStepFragment(jsonStr, isTwoPane),
-                            presenter.getStepDetailFragment(null, 0, 0, 0, 0)
-                    );
-                }else{
-                    presenter.addFragment(presenter.getStepFragment(jsonStr, isTwoPane));
-                }
+                Log.d(TAG, "fragment added");
+                presenter.addFragment(presenter.getStepFragment(jsonStr, isTwoPane));
             }
         }
     }
@@ -165,12 +128,26 @@ public class RecipeDetailActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if(isTwoPane){
             RecipeDetailActivity.this.finish();
         }else{
-            if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+            Log.d(TAG, "fragment size "+getSupportFragmentManager().getFragments().size());
+
+            for (Fragment f : getSupportFragmentManager().getFragments()){
+                if(f instanceof RecipeStepFragment){
+                    Log.d(TAG, "f is RecipeStepFragment with tag "+f.getTag());
+                }else if(f instanceof RecipeDetailStepFragment){
+                    Log.d(TAG, "f is RecipeDetailStepFragment with tag "+f.getTag());
+                }else{
+                    Log.d(TAG, "tag is null!");
+                }
+            }
+
+            Log.d(TAG, "fragment inbackstack "+getSupportFragmentManager().getBackStackEntryCount());
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0){
                 getSupportFragmentManager().popBackStack();
+            }else {
+                RecipeDetailActivity.this.finish();
             }
         }
     }

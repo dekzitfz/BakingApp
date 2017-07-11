@@ -2,9 +2,6 @@ package id.dekz.bakingapp.features.recipedetail;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
-import android.widget.FrameLayout;
 
 import com.google.gson.Gson;
 
@@ -15,7 +12,6 @@ import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.basemvp.BasePresenter;
 import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.features.recipestep.RecipeStepFragment;
-import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
 import id.dekz.bakingapp.model.Step;
 
@@ -41,13 +37,14 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
         view = null;
     }
 
+    //navigate from detail step
     void replaceFragment(Fragment fragment){
         view.getFragmentManagerFromActivity().beginTransaction()
-                .replace(R.id.container, fragment, "removable")
+                .replace(R.id.container, fragment, RecipeDetailStepFragment.class.getSimpleName())
                 .commit();
     }
 
-    void addFragmentAndAddToBackStack(Fragment fragment){
+    void addFragmentAndAddToBackStack(Fragment fragment, Fragment f){
         String fragmentTag = "";
         if(fragment instanceof RecipeStepFragment){
             fragmentTag = RecipeStepFragment.class.getSimpleName();
@@ -56,9 +53,11 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
         }
 
         view.getFragmentManagerFromActivity().beginTransaction()
-                .replace(view.getContainerID(), fragment, fragmentTag)
-                .addToBackStack(null)
+                .hide(f)
+                .add(view.getContainerID(), fragment, fragmentTag)
+                .addToBackStack(fragmentTag)
                 .commit();
+        view.getFragmentManagerFromActivity().executePendingTransactions();
     }
 
     void addFragment(Fragment fragment){
@@ -69,9 +68,13 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
             fragmentTag = RecipeDetailStepFragment.class.getSimpleName();
         }
 
-        view.getFragmentManagerFromActivity().beginTransaction()
-                .add(view.getContainerID(), fragment, fragmentTag)
-                .commit();
+        if(view.getFragmentManagerFromActivity().findFragmentByTag(RecipeStepFragment.class.getSimpleName()) == null){
+            view.getFragmentManagerFromActivity().beginTransaction()
+                    .add(R.id.container, fragment, fragmentTag)
+                    //.addToBackStack(fragmentTag)
+                    .commit();
+            view.getFragmentManagerFromActivity().executePendingTransactions();
+        }
     }
 
     void addFragments(Fragment left, Fragment right){
@@ -79,6 +82,7 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
                 .add(R.id.container_left, left)
                 .add(R.id.container_right, right)
                 .commit();
+        view.getFragmentManagerFromActivity().executePendingTransactions();
     }
 
     void changeFragmentRight(Fragment fragment){

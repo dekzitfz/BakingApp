@@ -61,11 +61,13 @@ public class RecipeStepPresenter implements BasePresenter<RecipeStepView> {
         return stringBuilder.toString();
     }
 
-    void addFragment(Fragment fragment){
+    void addFragment(Fragment fragment, Fragment f){
         view.getFragmentManagerFromFragment().beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
+                //.hide(f)
+                .replace(R.id.container, fragment, RecipeDetailStepFragment.class.getSimpleName())
+                .addToBackStack(RecipeDetailStepFragment.class.getSimpleName())
                 .commit();
+        view.getFragmentManagerFromFragment().executePendingTransactions();
     }
 
     Fragment getDetailStepFragment(String json,

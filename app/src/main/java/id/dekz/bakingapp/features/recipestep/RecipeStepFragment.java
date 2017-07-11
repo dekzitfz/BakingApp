@@ -1,7 +1,6 @@
 package id.dekz.bakingapp.features.recipestep;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,15 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.adapter.StepAdapter;
-import id.dekz.bakingapp.features.recipedetail.RecipeDetailActivity;
-import id.dekz.bakingapp.features.recipedetailstep.RecipeDetailStepFragment;
 import id.dekz.bakingapp.model.Recipe;
 import id.dekz.bakingapp.model.Step;
 import id.dekz.bakingapp.util.Constant;
@@ -64,6 +59,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
 
     @Override
     public void onAttach(Context context) {
+        Log.d(TAG, "onAttach");
         super.onAttach(context);
         try {
             onStepSelected = (OnStepSelected) context;
@@ -73,9 +69,23 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
         }
     }
 
+    @Override
+    public void onDetach() {
+        Log.d(TAG, "onDetach");
+        super.onDetach();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_step, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
@@ -91,12 +101,14 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState");
         super.onSaveInstanceState(outState);
         outState.putString(JSON_STRING, json);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState!=null){
             json = savedInstanceState.getString(JSON_STRING);
@@ -107,6 +119,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
 
     @Override
     public void onAttachView() {
+        Log.d(TAG, "onAttachView");
         presenter = new RecipeStepPresenter();
         presenter.onAttach(this);
 
@@ -125,9 +138,16 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
 
     @Override
     public void onDestroyView() {
+        Log.d(TAG, "onDestroyView");
         super.onDestroyView();
         unbinder.unbind();
         onDetachView();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
     }
 
     @Override
@@ -166,7 +186,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
                             totalSteps,
                             previousStepID,
                             nextStepID
-                    )
+                    ), this
             );
         }
     }

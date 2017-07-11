@@ -2,9 +2,7 @@ package id.dekz.bakingapp.features.recipedetailstep;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -15,20 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.io.IOException;
 
 import butterknife.BindBool;
 import butterknife.BindView;
@@ -38,7 +26,6 @@ import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.features.recipedetail.RecipeDetailActivity;
 import id.dekz.bakingapp.model.Step;
 import id.dekz.bakingapp.util.Constant;
-import id.dekz.bakingapp.util.URLUtils;
 
 /**
  * Created by DEKZ on 7/4/2017.
@@ -54,7 +41,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     private RecipeDetailStepPresenter presenter;
     private StepNavigationClickListener navigationClickListener;
     private SimpleExoPlayer mPlayer;
-    private long playbackPosition;
+    private long playbackPosition = 0;
     private int currentWindow;
     private String json;
 
@@ -105,6 +92,12 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     public RecipeDetailStepFragment() {
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -147,7 +140,8 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         }
     }
 
-    @Override
+    //disable this for causing not resume from last pos when rotating
+    /*@Override
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
@@ -161,7 +155,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
-    }
+    }*/
 
     @Override
     public void onDestroyView() {
@@ -242,12 +236,10 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
     @Override
     public void onPlayerSet(SimpleExoPlayer player, final MediaSource mediaSource) {
-
         playerView.setVisibility(View.VISIBLE);
         imageStep.setVisibility(View.GONE);
 
         mPlayer = player;
-
 
         getActivity().runOnUiThread(new Runnable() {
             @SuppressLint("InlinedApi")
@@ -270,7 +262,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
                 playerView.setPlayer(mPlayer);
                 mPlayer.prepare(mediaSource);
-                mPlayer.seekTo(currentWindow, playbackPosition);
+                mPlayer.seekTo(playbackPosition);
                 mPlayer.setPlayWhenReady(true);
             }
         });
