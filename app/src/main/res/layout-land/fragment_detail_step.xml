@@ -49,6 +49,7 @@
             android:layout_height="0dp" />
 
         <LinearLayout
+            android:id="@+id/view_bottom_nav"
             android:visibility="gone"
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"

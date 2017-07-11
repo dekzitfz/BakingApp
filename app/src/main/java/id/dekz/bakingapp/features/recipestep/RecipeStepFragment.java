@@ -186,7 +186,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView, Step
                             totalSteps,
                             previousStepID,
                             nextStepID
-                    ), this
+                    )
             );
         }
     }

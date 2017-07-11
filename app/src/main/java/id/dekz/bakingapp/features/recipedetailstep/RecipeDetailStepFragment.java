@@ -53,6 +53,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @BindView(R.id.fab_previous)FloatingActionButton previousButton;
     @BindView(R.id.tv_step_position)TextView stepPosition;
     @BindView(R.id.img_step)ImageView imageStep;
+    @BindView(R.id.view_bottom_nav)LinearLayout bottomNav;
 
     @BindBool(R.bool.isLandscape)boolean isLandsacpe;
     @BindBool(R.bool.isTablet)boolean isTablet;
@@ -280,9 +281,14 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     }
 
     @Override
-    public void onNomediaAvailable() {
+    public void onNoMediaAvailable() {
         playerView.setVisibility(View.GONE);
         imageStep.setVisibility(View.GONE);
+
+        if(isLandsacpe && !isTablet){
+            bottomNav.setVisibility(View.VISIBLE);
+            description.setVisibility(View.VISIBLE);
+        }
     }
 
     private void releasePlayer() {

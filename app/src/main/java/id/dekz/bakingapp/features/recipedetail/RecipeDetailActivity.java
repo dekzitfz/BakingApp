@@ -3,14 +3,11 @@ package id.dekz.bakingapp.features.recipedetail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.FrameLayout;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,8 +30,6 @@ public class RecipeDetailActivity extends AppCompatActivity
     private RecipeDetailPresenter presenter;
     private String jsonStr;
     private boolean isTwoPane = false;
-    private RecipeStepFragment stepFragment;
-    private RecipeDetailStepFragment detailStepFragment;
 
     @BindView(R.id.toolbar)Toolbar toolbar;
 
@@ -55,17 +50,9 @@ public class RecipeDetailActivity extends AppCompatActivity
 
         if(savedInstanceState != null){
             jsonStr = savedInstanceState.getString(JSON_STRING);
-            /*stepFragment = (RecipeStepFragment) getSupportFragmentManager().getFragment(
-                    savedInstanceState,
-                    RecipeStepFragment.class.getSimpleName());
-
-            detailStepFragment = (RecipeDetailStepFragment) getSupportFragmentManager().getFragment(
-                    savedInstanceState,
-                    RecipeDetailStepFragment.class.getSimpleName());*/
         }else{
             jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         }
-
 
         onAttachView();
     }
@@ -131,19 +118,6 @@ public class RecipeDetailActivity extends AppCompatActivity
         if(isTwoPane){
             RecipeDetailActivity.this.finish();
         }else{
-            Log.d(TAG, "fragment size "+getSupportFragmentManager().getFragments().size());
-
-            for (Fragment f : getSupportFragmentManager().getFragments()){
-                if(f instanceof RecipeStepFragment){
-                    Log.d(TAG, "f is RecipeStepFragment with tag "+f.getTag());
-                }else if(f instanceof RecipeDetailStepFragment){
-                    Log.d(TAG, "f is RecipeDetailStepFragment with tag "+f.getTag());
-                }else{
-                    Log.d(TAG, "tag is null!");
-                }
-            }
-
-            Log.d(TAG, "fragment inbackstack "+getSupportFragmentManager().getBackStackEntryCount());
             if (getSupportFragmentManager().getBackStackEntryCount() > 0){
                 getSupportFragmentManager().popBackStack();
             }else {

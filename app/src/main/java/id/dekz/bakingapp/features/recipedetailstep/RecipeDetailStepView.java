@@ -18,6 +18,6 @@ public interface RecipeDetailStepView extends BaseView {
     Context getContextFromFragment();
     void onPlayerSet(SimpleExoPlayer player, MediaSource mediaSource);
     void onImageSet();
-    void onNomediaAvailable();
+    void onNoMediaAvailable();
     ImageView getImageView();
 }

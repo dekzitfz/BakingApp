@@ -128,7 +128,7 @@ public class RecipeDetailStepPresenter implements BasePresenter<RecipeDetailStep
             //video not available, check img
             if(thumbURL.equals("") || thumbURL.length()==0){
                 //media is empty
-                view.onNomediaAvailable();
+                view.onNoMediaAvailable();
             }else{
                 //only image available, show it
                 contentChecker(thumbURL, "image");

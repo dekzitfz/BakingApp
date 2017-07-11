@@ -50,6 +50,7 @@
             android:layout_height="0dp" />
 
         <LinearLayout
+            android:id="@+id/view_bottom_nav"
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
             android:layout_weight="0.2"
