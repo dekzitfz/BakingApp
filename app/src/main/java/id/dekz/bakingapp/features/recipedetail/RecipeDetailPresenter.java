@@ -91,18 +91,6 @@ public class RecipeDetailPresenter implements BasePresenter<RecipeDetailView> {
         view.bindData(gson.fromJson(json, Recipe.class));
     }
 
-    List<Step> getListSteps(String json){
-        List<Step> result = new ArrayList<>();
-        Recipe recipe = gson.fromJson(json, Recipe.class);
-        if(recipe != null){
-            for(Step s : recipe.getSteps()){
-                result.add(s);
-            }
-        }
-
-        return result;
-    }
-
     String getStepJsonByIndex(String jsonRecipe, int indexID){
         Recipe recipe = gson.fromJson(jsonRecipe, Recipe.class);
         int pos = 0;

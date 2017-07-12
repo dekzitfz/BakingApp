@@ -11,6 +11,5 @@ import id.dekz.bakingapp.model.Recipe;
 
 public interface RecipeDetailView extends BaseView {
     void bindData(Recipe recipe);
-    int getContainerID();
     FragmentManager getFragmentManagerFromActivity();
 }

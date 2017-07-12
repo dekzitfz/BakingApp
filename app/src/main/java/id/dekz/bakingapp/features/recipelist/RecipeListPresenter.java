@@ -3,7 +3,6 @@ package id.dekz.bakingapp.features.recipelist;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.OperationApplicationException;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
@@ -190,10 +189,6 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
 
     void initLoader(){
         view.getLoaderManagerFromActivity().initLoader(LOADER_ID, null, loaderCallbacks);
-    }
-
-    void restartLoader(){
-        view.getLoaderManagerFromActivity().restartLoader(LOADER_ID, null, loaderCallbacks);
     }
 
 }

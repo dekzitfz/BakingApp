@@ -100,12 +100,8 @@ public class RecipeDetailActivity extends AppCompatActivity
 
     @Override
     public void bindData(Recipe recipe) {
+        //noinspection ConstantConditions
         getSupportActionBar().setTitle(recipe.getName());
-    }
-
-    @Override
-    public int getContainerID() {
-        return R.id.container;
     }
 
     @Override

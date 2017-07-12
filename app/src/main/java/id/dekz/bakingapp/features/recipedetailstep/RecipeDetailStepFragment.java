@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindBool;
 import butterknife.BindView;
@@ -55,7 +54,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @BindView(R.id.img_step)ImageView imageStep;
     @BindView(R.id.view_bottom_nav)LinearLayout bottomNav;
 
-    @BindBool(R.bool.isLandscape)boolean isLandsacpe;
+    @BindBool(R.bool.isLandscape)boolean isLandscape;
     @BindBool(R.bool.isTablet)boolean isTablet;
 
     public interface StepNavigationClickListener{
@@ -246,7 +245,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
             @SuppressLint("InlinedApi")
             @Override
             public void run() {
-                if(isLandsacpe && !isTablet && mPlayer!= null){
+                if(isLandscape && !isTablet && mPlayer!= null){
                     //handset landscape mode
                     //fullscreen
 
@@ -285,7 +284,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         playerView.setVisibility(View.GONE);
         imageStep.setVisibility(View.GONE);
 
-        if(isLandsacpe && !isTablet){
+        if(isLandscape && !isTablet){
             bottomNav.setVisibility(View.VISIBLE);
             description.setVisibility(View.VISIBLE);
         }
