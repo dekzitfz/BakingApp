@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="id.dekz.bakingapp">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".App"
@@ -23,11 +23,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".features.recipedetail.RecipeDetailActivity"/>
+        <activity android:name=".features.recipedetail.RecipeDetailActivity" />
+
         <provider
-            android:exported="false"
+            android:name=".database.BakingContentProvider"
             android:authorities="id.dekz.bakingapp"
-            android:name=".database.BakingContentProvider"/>
+            android:exported="false" />
+
+        <receiver android:name=".features.widget.IngredientsWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ingredients_widget_info" />
+        </receiver>
     </application>
 
 </manifest>
