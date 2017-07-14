@@ -30,6 +30,9 @@
             android:authorities="id.dekz.bakingapp"
             android:exported="false" />
 
+        <service android:name=".features.widget.QueryIngredientService"/>
+        <activity android:name=".features.widget.ConfigWidgetActivity"/>
+
         <receiver android:name=".features.widget.IngredientsWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

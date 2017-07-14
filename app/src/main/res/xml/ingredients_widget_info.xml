@@ -2,6 +2,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialKeyguardLayout="@layout/ingredients_widget"
     android:initialLayout="@layout/ingredients_widget"
+    android:configure="id.dekz.bakingapp.features.widget.ConfigWidgetActivity"
     android:minHeight="40dp"
     android:minWidth="40dp"
     android:previewImage="@drawable/example_appwidget_preview"
