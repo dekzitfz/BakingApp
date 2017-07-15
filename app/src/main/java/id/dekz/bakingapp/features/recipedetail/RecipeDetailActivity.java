@@ -52,18 +52,9 @@ public class RecipeDetailActivity extends AppCompatActivity
             jsonStr = savedInstanceState.getString(JSON_STRING);
         }else{
             jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-            //Log.i(TAG, "jsonStr--> "+jsonStr);
         }
 
         onAttachView();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.i(TAG, "onNewIntent");
-        jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
-        Log.i(TAG, "jsonStr--> "+jsonStr);
     }
 
     @Override
@@ -116,8 +107,6 @@ public class RecipeDetailActivity extends AppCompatActivity
         }else{
             getSupportActionBar().setTitle(recipe.getName());
         }
-        //noinspection ConstantConditions
-        //getSupportActionBar().setTitle(recipe.getName());
     }
 
     @Override

@@ -35,9 +35,7 @@ public class IngredientsWidget extends AppWidgetProvider {
                                 int recipeID, String recipeName, String jsonRecipe, int appWidgetId) {
 
         Log.d(TAG, "updateAppWidget");
-        Log.d(TAG, "recipeName--> "+recipeName);
         String ingredient = getEachIngredient(getIngredients(context,recipeID));
-        //Log.d(TAG, ingredient);
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
@@ -52,7 +50,6 @@ public class IngredientsWidget extends AppWidgetProvider {
         if(jsonRecipe == null || jsonRecipe.equals("") || jsonRecipe.length()==0){
             Log.w(TAG, "json is empty!");
         }else{
-            Log.w(TAG, "jsonwidget---> "+jsonRecipe);
             views.setOnClickPendingIntent(R.id.rootWidget, pendingIntent);
         }
 
