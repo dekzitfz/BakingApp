@@ -1,5 +1,6 @@
 package id.dekz.bakingapp.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -18,8 +19,17 @@ import id.dekz.bakingapp.model.Recipe;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     private List<Recipe> data = new ArrayList<>();
+    private RecipeClickFromWidgetListener clickFromWidgetListener;
 
     public RecipeAdapter() {
+    }
+
+    public interface RecipeClickFromWidgetListener{
+        void onClickFromWidget(Recipe recipe);
+    }
+
+    public void setClickFromWidgetListener(RecipeClickFromWidgetListener clickFromWidgetListener) {
+        this.clickFromWidgetListener = clickFromWidgetListener;
     }
 
     public void replaceAll(List<Recipe> data){
@@ -39,7 +49,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     @Override
     public void onBindViewHolder(RecipeViewHolder holder, int position) {
-        holder.bind(data.get(position));
+        if(clickFromWidgetListener != null){
+            holder.bind(data.get(position), clickFromWidgetListener);
+        }else{
+            holder.bind(data.get(position), null);
+        }
     }
 
     @Override

@@ -1,6 +1,9 @@
 package id.dekz.bakingapp.features.widget;
 
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +24,7 @@ import id.dekz.bakingapp.util.RecipeLoader;
  * Created by DEKZ on 7/14/2017.
  */
 
-public class ConfigWidgetActivity extends AppCompatActivity {
+public class ConfigWidgetActivity extends AppCompatActivity implements RecipeAdapter.RecipeClickFromWidgetListener {
 
     private static final String TAG = ConfigWidgetActivity.class.getSimpleName();
 
@@ -30,12 +33,16 @@ public class ConfigWidgetActivity extends AppCompatActivity {
     private RecipeAdapter adapter;
     private LoaderManager.LoaderCallbacks<List<Recipe>> loaderCallbacks;
     private static final int LOADER_ID = 322;
+    private int widgetID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_widget);
         ButterKnife.bind(this);
+
+        widgetID = getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        Log.d(TAG, "widgetID-> "+widgetID);
 
         adapter = new RecipeAdapter();
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -62,6 +69,7 @@ public class ConfigWidgetActivity extends AppCompatActivity {
             public void onLoadFinished(Loader<List<Recipe>> loader, List<Recipe> data) {
                 if(data != null && data.size() > 0){
                     adapter.replaceAll(data);
+                    adapter.setClickFromWidgetListener(ConfigWidgetActivity.this);
                 }else{
                     //data null
                     Log.d(TAG, "data is empty");
@@ -77,5 +85,22 @@ public class ConfigWidgetActivity extends AppCompatActivity {
 
     private void initLoader(){
         getSupportLoaderManager().initLoader(LOADER_ID, null, loaderCallbacks);
+    }
+
+    @Override
+    public void onClickFromWidget(Recipe recipe) {
+        Log.d(TAG, recipe.getName()+" selected");
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putInt("WIDGET_SELECTED_RECIPE_ID", recipe.getId())
+                .apply();
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        IngredientsWidget.updateAppWidget(this, appWidgetManager, recipe.getId(), recipe.getName(), widgetID);
+
+        Intent resultValue = new Intent();
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        setResult(RESULT_OK, resultValue);
+        finish();
     }
 }

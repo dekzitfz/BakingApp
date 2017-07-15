@@ -1,7 +1,9 @@
 package id.dekz.bakingapp.adapter.viewholder;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,6 +14,7 @@ import com.google.gson.Gson;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
+import id.dekz.bakingapp.adapter.RecipeAdapter;
 import id.dekz.bakingapp.features.recipedetail.RecipeDetailActivity;
 import id.dekz.bakingapp.model.Recipe;
 
@@ -32,7 +35,7 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bind(final Recipe data){
+    public void bind(final Recipe data, @Nullable final RecipeAdapter.RecipeClickFromWidgetListener clickFromWidget){
         if(data.getImage().equals("")){
             Glide.with(itemView.getContext())
                     .load(getImage(data.getId()))
@@ -47,13 +50,24 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder {
         name.setText(data.getName());
         servings.setText(data.getResolvedServings());
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent detail = new Intent(itemView.getContext(), RecipeDetailActivity.class);
-                detail.putExtra(Intent.EXTRA_TEXT, new Gson().toJson(data));
-                itemView.getContext().startActivity(detail);
-            }
-        });
+        if(clickFromWidget == null){
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent detail = new Intent(itemView.getContext(), RecipeDetailActivity.class);
+                    detail.putExtra(Intent.EXTRA_TEXT, new Gson().toJson(data));
+                    itemView.getContext().startActivity(detail);
+                }
+            });
+        }else{
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("clickedFromWidget", data.getName());
+                    clickFromWidget.onClickFromWidget(data);
+                }
+            });
+        }
+
     }
 }

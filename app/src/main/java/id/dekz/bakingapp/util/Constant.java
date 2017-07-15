@@ -13,4 +13,6 @@ public class Constant {
     public static final String KEY_PREVIOUS_STEP = "key_previous_step";
     public static final String KEY_NEXT_STEP = "key_next_step";
     public static final String KEY_IS_TWO_PANE = "key_is_two_pane";
+    public static final String WIDGET_SELECTED_RECIPE_ID = "recipe_id";
+    public static final String WIDGET_SELECTED_RECIPE_NAME = "recipe_name";
 }
