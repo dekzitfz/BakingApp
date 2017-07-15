@@ -52,9 +52,18 @@ public class RecipeDetailActivity extends AppCompatActivity
             jsonStr = savedInstanceState.getString(JSON_STRING);
         }else{
             jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            //Log.i(TAG, "jsonStr--> "+jsonStr);
         }
 
         onAttachView();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.i(TAG, "onNewIntent");
+        jsonStr = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        Log.i(TAG, "jsonStr--> "+jsonStr);
     }
 
     @Override
@@ -79,6 +88,7 @@ public class RecipeDetailActivity extends AppCompatActivity
 
         if(container == null){isTwoPane = true;}
 
+
         if(jsonStr != null){
             presenter.getRecipeModel(jsonStr);
             if(isTwoPane){
@@ -100,8 +110,14 @@ public class RecipeDetailActivity extends AppCompatActivity
 
     @Override
     public void bindData(Recipe recipe) {
+        Log.d(TAG, "recipename--> "+recipe.getName());
+        if(getSupportActionBar() ==  null){
+            Log.w(TAG, "actionbar is null!!");
+        }else{
+            getSupportActionBar().setTitle(recipe.getName());
+        }
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(recipe.getName());
+        //getSupportActionBar().setTitle(recipe.getName());
     }
 
     @Override

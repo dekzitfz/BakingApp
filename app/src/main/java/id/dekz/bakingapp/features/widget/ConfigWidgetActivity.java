@@ -11,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -18,6 +20,7 @@ import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.adapter.RecipeAdapter;
 import id.dekz.bakingapp.model.Recipe;
+import id.dekz.bakingapp.util.Constant;
 import id.dekz.bakingapp.util.RecipeLoader;
 
 /**
@@ -34,6 +37,7 @@ public class ConfigWidgetActivity extends AppCompatActivity implements RecipeAda
     private LoaderManager.LoaderCallbacks<List<Recipe>> loaderCallbacks;
     private static final int LOADER_ID = 322;
     private int widgetID;
+    private Gson gson = new Gson();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,11 +96,26 @@ public class ConfigWidgetActivity extends AppCompatActivity implements RecipeAda
         Log.d(TAG, recipe.getName()+" selected");
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
-                .putInt("WIDGET_SELECTED_RECIPE_ID", recipe.getId())
-                .apply();
+                .putInt(Constant.WIDGET_SELECTED_RECIPE_ID, recipe.getId())
+                .commit();
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(Constant.WIDGET_SELECTED_RECIPE_NAME, recipe.getName())
+                .commit();
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(Constant.KEY_RECIPE, gson.toJson(recipe))
+                .commit();
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        IngredientsWidget.updateAppWidget(this, appWidgetManager, recipe.getId(), recipe.getName(), widgetID);
+        IngredientsWidget.updateAppWidget(this,
+                appWidgetManager,
+                recipe.getId(),
+                recipe.getName(),
+                gson.toJson(recipe),
+                widgetID);
 
         Intent resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);

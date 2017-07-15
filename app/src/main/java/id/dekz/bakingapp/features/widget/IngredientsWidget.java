@@ -17,6 +17,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.database.contract.IngredientContract;
+import id.dekz.bakingapp.features.recipedetail.RecipeDetailActivity;
 import id.dekz.bakingapp.features.recipelist.RecipeListActivity;
 import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.util.Constant;
@@ -31,10 +32,10 @@ public class IngredientsWidget extends AppWidgetProvider {
     private static final String TAG = IngredientsWidget.class.getSimpleName();
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int recipeID, String recipeName, int appWidgetId) {
+                                int recipeID, String recipeName, String jsonRecipe, int appWidgetId) {
 
         Log.d(TAG, "updateAppWidget");
-        Log.d(TAG, "recipeID--> "+recipeID);
+        Log.d(TAG, "recipeName--> "+recipeName);
         String ingredient = getEachIngredient(getIngredients(context,recipeID));
         //Log.d(TAG, ingredient);
 
@@ -42,6 +43,19 @@ public class IngredientsWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredients_widget);
         views.setTextViewText(R.id.tv_widget_recipe_name, recipeName);
         views.setTextViewText(R.id.tv_widget_ingredients, ingredient);
+
+        Intent recipeDetail = new Intent(context, RecipeDetailActivity.class);
+        recipeDetail.putExtra(Intent.EXTRA_TEXT, jsonRecipe);
+        recipeDetail.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, recipeDetail, PendingIntent.FLAG_CANCEL_CURRENT);
+        if(jsonRecipe == null || jsonRecipe.equals("") || jsonRecipe.length()==0){
+            Log.w(TAG, "json is empty!");
+        }else{
+            Log.w(TAG, "jsonwidget---> "+jsonRecipe);
+            views.setOnClickPendingIntent(R.id.rootWidget, pendingIntent);
+        }
+
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -56,8 +70,11 @@ public class IngredientsWidget extends AppWidgetProvider {
         String recipeName = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(Constant.WIDGET_SELECTED_RECIPE_NAME, "");
 
+        String jsonRecipe = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(Constant.KEY_RECIPE, "");
+
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, recipeID, recipeName, appWidgetId);
+            updateAppWidget(context, appWidgetManager, recipeID, recipeName, jsonRecipe, appWidgetId);
         }
     }
 
