@@ -35,12 +35,11 @@ public class RecyclerViewMatcher {
                     try {
                         idDescription = this.resources.getResourceName(recyclerViewId);
                     } catch (Resources.NotFoundException var4) {
-                        idDescription = String.format("%s (resource name not found)",
-                                recyclerViewId);
+                        idDescription = String.format("%s (resource name not found)", recyclerViewId);
                     }
                 }
 
-                description.appendText("with id: " + idDescription);
+                description.appendText("RecyclerView with id: " + idDescription + " at position: " + position);
             }
 
             public boolean matchesSafely(View view) {
@@ -51,7 +50,10 @@ public class RecyclerViewMatcher {
                     RecyclerView recyclerView =
                             (RecyclerView) view.getRootView().findViewById(recyclerViewId);
                     if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
-                        childView = recyclerView.findViewHolderForAdapterPosition(position).itemView;
+                        RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(position);
+                        if (viewHolder != null) {
+                            childView = viewHolder.itemView;
+                        }
                     }
                     else {
                         return false;
@@ -64,7 +66,6 @@ public class RecyclerViewMatcher {
                     View targetView = childView.findViewById(targetViewId);
                     return view == targetView;
                 }
-
             }
         };
     }

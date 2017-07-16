@@ -28,7 +28,7 @@ public class RecipeListTest {
             new ActivityTestRule<>(RecipeListActivity.class);
 
     @Test
-    public void checkRecipePosition(){
+    public void checkRecipePositionContainCorrectText(){
         Espresso.onView(withRecyclerView(R.id.rv_recipe).atPosition(1))
                 .check(ViewAssertions.matches(
                         ViewMatchers.hasDescendant(
