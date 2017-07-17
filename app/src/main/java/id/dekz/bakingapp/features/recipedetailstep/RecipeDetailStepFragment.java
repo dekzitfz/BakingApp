@@ -52,7 +52,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @BindView(R.id.fab_previous)FloatingActionButton previousButton;
     @BindView(R.id.tv_step_position)TextView stepPosition;
     @BindView(R.id.img_step)ImageView imageStep;
-    @BindView(R.id.view_bottom_nav)LinearLayout bottomNav;
+    @Nullable @BindView(R.id.view_bottom_nav)LinearLayout bottomNav;
 
     @BindBool(R.bool.isLandscape)boolean isLandscape;
     @BindBool(R.bool.isTablet)boolean isTablet;
