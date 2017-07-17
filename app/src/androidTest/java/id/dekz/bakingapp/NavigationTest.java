@@ -33,11 +33,6 @@ import static org.hamcrest.Matchers.not;
 
 /**
  * Created by DEKZ on 7/17/2017.
- * ----------------------------------------------------------
- *                          N O T E
- * CURRENTLY THIS TEST ONLY SUPPORT ON HANDSET (NOT TABLET)
- * WITH SCREEN-WIDTH SMALLER THAN 600DP
- * ----------------------------------------------------------
  */
 
 @RunWith(AndroidJUnit4.class)
