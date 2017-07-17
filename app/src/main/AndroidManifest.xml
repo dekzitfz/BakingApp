@@ -23,7 +23,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".features.recipedetail.RecipeDetailActivity" />
+
+        <activity
+            android:parentActivityName=".features.recipelist.RecipeListActivity"
+            android:name=".features.recipedetail.RecipeDetailActivity"
+            tools:targetApi="jelly_bean" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".features.recipelist.RecipeListActivity" />
+        </activity>
 
         <provider
             android:name=".database.BakingContentProvider"

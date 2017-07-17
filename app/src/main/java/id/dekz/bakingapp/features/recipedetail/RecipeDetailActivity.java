@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import butterknife.BindView;
@@ -47,6 +48,7 @@ public class RecipeDetailActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(savedInstanceState != null){
             jsonStr = savedInstanceState.getString(JSON_STRING);
@@ -55,6 +57,16 @@ public class RecipeDetailActivity extends AppCompatActivity
         }
 
         onAttachView();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
