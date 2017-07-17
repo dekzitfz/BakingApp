@@ -6,6 +6,7 @@ import android.content.OperationApplicationException;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
@@ -24,6 +25,7 @@ import id.dekz.bakingapp.model.Ingredient;
 import id.dekz.bakingapp.model.Recipe;
 import id.dekz.bakingapp.model.Step;
 import id.dekz.bakingapp.util.Constant;
+import id.dekz.bakingapp.util.RecipeListIdlingResource;
 import id.dekz.bakingapp.util.RecipeLoader;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,7 +58,11 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         view = null;
     }
 
-    void loadData(){
+    void loadData(final RecipeListIdlingResource idlingResource){
+        //for test only, idling resource will not null,
+        //set to false will make espresso wait
+        if(idlingResource != null) idlingResource.setIdleState(false);
+
         view.onDataLoading();
         recipeCall = App.getRestClient()
                 .getService()
@@ -83,12 +89,15 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                     Log.w(TAG, "response code: "+response.code());
                     initLoader();
                 }
+
+                if(idlingResource != null) idlingResource.setIdleState(true);
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
-                t.printStackTrace();
+                //t.printStackTrace();
                 initLoader();
+                if(idlingResource != null) idlingResource.setIdleState(true);
             }
         });
     }

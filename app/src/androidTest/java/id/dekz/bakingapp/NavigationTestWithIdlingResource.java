@@ -1,6 +1,6 @@
 package id.dekz.bakingapp;
 
-import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.matcher.ViewMatchers;
@@ -9,53 +9,55 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 import android.view.ViewGroup;
 
-import junit.framework.AssertionFailedError;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import id.dekz.bakingapp.features.recipelist.RecipeListActivity;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
-import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static android.support.test.espresso.matcher.ViewMatchers.hasFocus;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 /**
- * Created by DEKZ on 7/16/2017.
- *
- * --------------------------------------------------------------------------------
- *                                    N O T E !
- * RUN THIS TEST WHEN OFFLINE MODE ONLY! ASSUME THERE DATA EXIST ON LOCAL DATABASE!
- * --------------------------------------------------------------------------------
+ * Created by DEKZ on 7/17/2017.
  */
 
 @RunWith(AndroidJUnit4.class)
-public class DetailRecipeNavigationTest {
+public class NavigationTestWithIdlingResource {
 
     public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {
         return new RecyclerViewMatcher(recyclerViewId);
     }
 
+    private IdlingResource idlingResource;
+
     @Rule
     public ActivityTestRule<RecipeListActivity> testRule =
             new ActivityTestRule<>(RecipeListActivity.class);
+
+    @Before
+    public void registerIdlingResource(){
+        idlingResource = testRule.getActivity().getIdlingResource();
+        Espresso.registerIdlingResources(idlingResource);
+    }
+
+    @After
+    public void unregisterIdlingResource(){
+        if(idlingResource != null) Espresso.unregisterIdlingResources(idlingResource);
+    }
 
     @Test
     public void selectRecipe_selectStep_checkContent(){

@@ -3,6 +3,10 @@ package id.dekz.bakingapp.features.recipelist;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +22,7 @@ import butterknife.ButterKnife;
 import id.dekz.bakingapp.R;
 import id.dekz.bakingapp.adapter.RecipeAdapter;
 import id.dekz.bakingapp.model.Recipe;
+import id.dekz.bakingapp.util.RecipeListIdlingResource;
 
 public class RecipeListActivity extends AppCompatActivity implements RecipeListView, SwipeRefreshLayout.OnRefreshListener {
 
@@ -28,9 +33,19 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     private RecipeAdapter adapter;
     private Parcelable layoutManagerSavedState;
 
+    @Nullable
+    private RecipeListIdlingResource idlingResource;
+
     @BindView(R.id.rv_recipe)RecyclerView rv;
     @BindView(R.id.toolbar)Toolbar toolbar;
     @BindView(R.id.swipe_refresh)SwipeRefreshLayout swipeRefresh;
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource(){
+        if(idlingResource == null) idlingResource = new RecipeListIdlingResource();
+        return idlingResource;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +61,8 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
 
         setupRecyclerView();
         onAttachView();
+
+        getIdlingResource();
     }
 
     @Override
@@ -64,7 +81,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     public void onAttachView() {
         presenter = new RecipeListPresenter();
         presenter.onAttach(this);
-        presenter.loadData();
+        presenter.loadData(idlingResource);
     }
 
     @Override
@@ -117,6 +134,6 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
 
     @Override
     public void onRefresh() {
-        presenter.loadData();
+        presenter.loadData(idlingResource);
     }
 }
