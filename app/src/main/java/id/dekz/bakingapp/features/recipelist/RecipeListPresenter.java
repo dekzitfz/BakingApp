@@ -200,11 +200,14 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
     }
 
     private void initLoader(){
-        if(view.getLoaderManagerFromActivity().getLoader(LOADER_ID) != null){
-            view.getLoaderManagerFromActivity().restartLoader(LOADER_ID, null, loaderCallbacks);
-        }else{
-            view.getLoaderManagerFromActivity().initLoader(LOADER_ID, null, loaderCallbacks);
+        if(view != null){
+            if(view.getLoaderManagerFromActivity().getLoader(LOADER_ID) != null){
+                view.getLoaderManagerFromActivity().restartLoader(LOADER_ID, null, loaderCallbacks);
+            }else{
+                view.getLoaderManagerFromActivity().initLoader(LOADER_ID, null, loaderCallbacks);
+            }
         }
+
     }
 
 }

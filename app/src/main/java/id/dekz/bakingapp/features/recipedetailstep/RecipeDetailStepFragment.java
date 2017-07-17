@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindBool;
 import butterknife.BindView;
@@ -125,6 +126,9 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         if(mPlayer != null){
             outState.putLong(PLAYER_POSITION, mPlayer.getCurrentPosition());
             outState.putInt(CURRENT_WINDOW, mPlayer.getCurrentWindowIndex());
+        }else{
+            outState.putLong(PLAYER_POSITION, playbackPosition);
+            outState.putInt(CURRENT_WINDOW, currentWindow);
         }
     }
 
@@ -140,10 +144,10 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
         }
     }
 
-    //disable this for causing not resume from last pos when rotating
-    /*@Override
+    @Override
     public void onPause() {
         super.onPause();
+        Log.i(TAG, "onPause");
         if (Util.SDK_INT <= 23) {
             releasePlayer();
         }
@@ -152,14 +156,16 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     @Override
     public void onStop() {
         super.onStop();
+        Log.i(TAG, "onStop");
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
-    }*/
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Log.i(TAG, "onDestroyView");
         releasePlayer();
         unbinder.unbind();
         onDetachView();
@@ -262,6 +268,7 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
 
                 playerView.setPlayer(mPlayer);
                 mPlayer.prepare(mediaSource);
+                Log.i(TAG,"playbackpos----> "+playbackPosition);
                 mPlayer.seekTo(playbackPosition);
                 mPlayer.setPlayWhenReady(true);
             }
@@ -293,10 +300,12 @@ public class RecipeDetailStepFragment extends Fragment implements RecipeDetailSt
     private void releasePlayer() {
         if (mPlayer != null) {
             playbackPosition = mPlayer.getCurrentPosition();
+            Log.i(TAG, "pos---> "+playbackPosition);
             currentWindow = mPlayer.getCurrentWindowIndex();
             mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
+            Log.i(TAG, "player released!");
         }
     }
 }
