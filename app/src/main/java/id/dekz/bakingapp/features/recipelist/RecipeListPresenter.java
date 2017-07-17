@@ -59,6 +59,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
     }
 
     void loadData(final RecipeListIdlingResource idlingResource){
+
         //for test only, idling resource will not null,
         //set to false will make espresso wait
         if(idlingResource != null) idlingResource.setIdleState(false);
@@ -80,6 +81,7 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
                         for(Recipe r : response.body()){
                             saveRecipeData(r);
                         }
+
                         insertAllCV();
                     }else{
                         Log.w(TAG, "response body is null!");
@@ -177,14 +179,15 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
 
             @Override
             public void onLoadFinished(Loader<List<Recipe>> loader, List<Recipe> data) {
-                if(data != null && data.size() > 0){
-                    /*for(int i=0; i<data.size(); i++){
-                        Log.i(TAG, data.get(i).getName()
-                                + " with "+data.get(i).getIngredients().size()+" ingredients and "
-                                + data.get(i).getSteps().size()+" steps");
-                    }*/
-                    view.onDataReceived(data);
+                if(data != null){
+                    if(data.size() > 0){
+                        view.onDataReceived(data);
+                    }else{
+                        Log.w(TAG, "data sizze is 0!");
+                        view.onWarningMessageReceived("Could Not Load Data");
+                    }
                 }else{
+                    Log.w(TAG, "query return null!");
                     view.onWarningMessageReceived("Could Not Load Data");
                 }
             }
@@ -196,8 +199,12 @@ public class RecipeListPresenter implements BasePresenter<RecipeListView> {
         };
     }
 
-    void initLoader(){
-        view.getLoaderManagerFromActivity().initLoader(LOADER_ID, null, loaderCallbacks);
+    private void initLoader(){
+        if(view.getLoaderManagerFromActivity().getLoader(LOADER_ID) != null){
+            view.getLoaderManagerFromActivity().restartLoader(LOADER_ID, null, loaderCallbacks);
+        }else{
+            view.getLoaderManagerFromActivity().initLoader(LOADER_ID, null, loaderCallbacks);
+        }
     }
 
 }

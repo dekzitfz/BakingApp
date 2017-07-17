@@ -93,6 +93,10 @@ public class ConfigWisgetPresenter implements BasePresenter<ConfigWidgetView> {
     }
 
     private void initLoader(){
-        view.getLoaderFromAct().initLoader(LOADER_ID, null, loaderCallbacks);
+        if(view.getLoaderFromAct().getLoader(LOADER_ID) != null){
+            view.getLoaderFromAct().restartLoader(LOADER_ID, null, loaderCallbacks);
+        }else{
+            view.getLoaderFromAct().initLoader(LOADER_ID, null, loaderCallbacks);
+        }
     }
 }
